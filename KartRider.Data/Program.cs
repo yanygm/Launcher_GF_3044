@@ -1,8 +1,4 @@
-using KartRider.Common.Utilities;
-using KartRider.IO;
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace KartRider
@@ -16,7 +12,6 @@ namespace KartRider
 		public static bool SpeedPatch;
 		public static bool PreventItem;
 		public static bool Developer_Name;
-		//public static string DataTime;
 
 		static Program()
 		{
