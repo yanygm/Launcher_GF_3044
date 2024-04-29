@@ -167,7 +167,7 @@ namespace KartRider
 			GameDataReset.SpeedType_DataReset();
 			GameDataReset.FlyingPet_DataReset();
 			GameDataReset.Kart_DataReset();
-			PartsDataReset.PartsSpecReset();
+			TuneSpec.Reset_PartSpec_SpecData();
 			TuneSpec.Reset_Tune_SpecData();
 			TuneSpec.Reset_Plant_SpecData();
 			TuneSpec.Reset_KartLevel_SpecData();
