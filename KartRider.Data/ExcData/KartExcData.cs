@@ -135,29 +135,29 @@ namespace ExcData
 				oPacket.WriteInt(Parts);
 				for (var i = 0; i < Parts; i++)
 				{
-					oPacket.WriteShort(PartsList[i][0]);
-					oPacket.WriteShort(PartsList[i][1]);
+					oPacket.WriteUShort(PartsList[i][0]);
+					oPacket.WriteUShort(PartsList[i][1]);
 					oPacket.WriteShort(0);
 					for (byte l = 0; l < 4; l++)
 					{
 						oPacket.WriteByte(255);
 					}
-					oPacket.WriteShort(PartsList[i][2]);
+					oPacket.WriteUShort(PartsList[i][2]);
 					oPacket.WriteByte((byte)PartsList[i][3]);
-					oPacket.WriteShort(PartsList[i][4]);
-					oPacket.WriteShort(PartsList[i][5]);
+					oPacket.WriteUShort(PartsList[i][4]);
+					oPacket.WriteUShort(PartsList[i][5]);
 					oPacket.WriteByte((byte)PartsList[i][6]);
-					oPacket.WriteShort(PartsList[i][7]);
-					oPacket.WriteShort(PartsList[i][8]);
+					oPacket.WriteUShort(PartsList[i][7]);
+					oPacket.WriteUShort(PartsList[i][8]);
 					oPacket.WriteByte((byte)PartsList[i][9]);
-					oPacket.WriteShort(PartsList[i][10]);
-					oPacket.WriteShort(PartsList[i][11]);
+					oPacket.WriteUShort(PartsList[i][10]);
+					oPacket.WriteUShort(PartsList[i][11]);
 					oPacket.WriteByte((byte)PartsList[i][12]);
-					oPacket.WriteShort(PartsList[i][13]);
-					oPacket.WriteShort(PartsList[i][14]);
+					oPacket.WriteUShort(PartsList[i][13]);
+					oPacket.WriteUShort(PartsList[i][14]);
 					oPacket.WriteByte(0);
 					oPacket.WriteShort(0);
-					oPacket.WriteShort(PartsList[i][15]);
+					oPacket.WriteUShort(PartsList[i][15]);
 					oPacket.WriteByte(0);
 					oPacket.WriteShort(0);
 				}
