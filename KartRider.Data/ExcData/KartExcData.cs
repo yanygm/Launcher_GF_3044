@@ -12,7 +12,7 @@ namespace ExcData
 		public static List<List<short>> TuneList = new List<List<short>>();
 		public static List<List<short>> PlantList = new List<List<short>>();
 		public static List<List<short>> LevelList = new List<List<short>>();
-		public static List<List<ushort>> PartsList = new List<List<ushort>>();
+		public static List<List<short>> PartsList = new List<List<short>>();
 
 		public static void Tune_ExcData()
 		{
@@ -135,29 +135,29 @@ namespace ExcData
 				oPacket.WriteInt(Parts);
 				for (var i = 0; i < Parts; i++)
 				{
-					oPacket.WriteUShort(PartsList[i][0]);
-					oPacket.WriteUShort(PartsList[i][1]);
+					oPacket.WriteShort(PartsList[i][0]);
+					oPacket.WriteShort(PartsList[i][1]);
 					oPacket.WriteShort(0);
 					for (byte l = 0; l < 4; l++)
 					{
 						oPacket.WriteByte(255);
 					}
-					oPacket.WriteUShort(PartsList[i][2]);
+					oPacket.WriteShort(PartsList[i][2]);
 					oPacket.WriteByte((byte)PartsList[i][3]);
-					oPacket.WriteUShort(PartsList[i][4]);
-					oPacket.WriteUShort(PartsList[i][5]);
+					oPacket.WriteShort(PartsList[i][4]);
+					oPacket.WriteShort(PartsList[i][5]);
 					oPacket.WriteByte((byte)PartsList[i][6]);
-					oPacket.WriteUShort(PartsList[i][7]);
-					oPacket.WriteUShort(PartsList[i][8]);
+					oPacket.WriteShort(PartsList[i][7]);
+					oPacket.WriteShort(PartsList[i][8]);
 					oPacket.WriteByte((byte)PartsList[i][9]);
-					oPacket.WriteUShort(PartsList[i][10]);
-					oPacket.WriteUShort(PartsList[i][11]);
+					oPacket.WriteShort(PartsList[i][10]);
+					oPacket.WriteShort(PartsList[i][11]);
 					oPacket.WriteByte((byte)PartsList[i][12]);
-					oPacket.WriteUShort(PartsList[i][13]);
-					oPacket.WriteUShort(PartsList[i][14]);
+					oPacket.WriteShort(PartsList[i][13]);
+					oPacket.WriteShort(PartsList[i][14]);
 					oPacket.WriteByte(0);
 					oPacket.WriteShort(0);
-					oPacket.WriteUShort(PartsList[i][15]);
+					oPacket.WriteShort(PartsList[i][15]);
 					oPacket.WriteByte(0);
 					oPacket.WriteShort(0);
 				}
@@ -408,7 +408,7 @@ namespace ExcData
 			}
 		}
 
-		public static void AddPartsList(ushort id, ushort sn, ushort Item_Cat_Id, ushort Item_Id, byte Grade, ushort PartsValue)
+		public static void AddPartsList(short id, short sn, short Item_Cat_Id, short Item_Id, byte Grade, short PartsValue)
 		{
 			int Add = -1;
 			for (var i = 0; i < PartsList.Count; i++)
@@ -421,7 +421,7 @@ namespace ExcData
 			}
 			if (Add == -1)
 			{
-				List<ushort> AddList = new List<ushort>();
+				List<short> AddList = new List<short>();
 				AddList.Add(id);
 				AddList.Add(sn);
 				AddList.Add(0);
@@ -511,7 +511,7 @@ namespace ExcData
 			}
 		}
 
-		public static void SavePartsList(List<List<ushort>> List)
+		public static void SavePartsList(List<List<short>> List)
 		{
 			File.Delete(@"Profile\PartsData.xml");
 			XmlTextWriter writer = new XmlTextWriter(@"Profile\PartsData.xml", System.Text.Encoding.UTF8);

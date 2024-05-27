@@ -1331,7 +1331,7 @@ namespace ExcData
 			}
 		}
 
-		public static void Use_PartsSpec(ushort id, ushort sn)
+		public static void Use_PartsSpec(short id, short sn)
 		{
 			int select = -1;
 			for (var i = 0; i < KartExcData.PartsList.Count; i++)
@@ -1348,9 +1348,9 @@ namespace ExcData
 				{
 					if (i == 63)
 					{
-						ushort Item_Id = KartExcData.PartsList[select][2];
-						ushort Grade = KartExcData.PartsList[select][3];
-						ushort PartsValue = KartExcData.PartsList[select][4];
+						short Item_Id = KartExcData.PartsList[select][2];
+						short Grade = KartExcData.PartsList[select][3];
+						short PartsValue = KartExcData.PartsList[select][4];
 						if (PartsValue != 0)
 						{
 							TuneSpec.PartSpec_TransAccelFactor = (KartExcData.PartsList[select][4] * 1.0f - 800.0f) / 25000.0f + 1.85f + -0.205f;
@@ -1362,9 +1362,9 @@ namespace ExcData
 					}
 					else if (i == 64)
 					{
-						ushort Item_Id = KartExcData.PartsList[select][5];
-						ushort Grade = (byte)KartExcData.PartsList[select][6];
-						ushort PartsValue = KartExcData.PartsList[select][7];
+						short Item_Id = KartExcData.PartsList[select][5];
+						short Grade = (byte)KartExcData.PartsList[select][6];
+						short PartsValue = KartExcData.PartsList[select][7];
 						if (PartsValue != 0)
 						{
 							TuneSpec.PartSpec_SteerConstraint = (KartExcData.PartsList[select][7] * 1.0f - 800.0f) / 250.0f + 2.1f + 20.3f;
@@ -1376,9 +1376,9 @@ namespace ExcData
 					}
 					else if (i == 65)
 					{
-						ushort Item_Id = KartExcData.PartsList[select][8];
-						ushort Grade = (byte)KartExcData.PartsList[select][9];
-						ushort PartsValue = KartExcData.PartsList[select][10];
+						short Item_Id = KartExcData.PartsList[select][8];
+						short Grade = (byte)KartExcData.PartsList[select][9];
+						short PartsValue = KartExcData.PartsList[select][10];
 						if (PartsValue != 0)
 						{
 							TuneSpec.PartSpec_DriftEscapeForce = KartExcData.PartsList[select][10] * 2.0f + 2200.0f;
@@ -1390,9 +1390,9 @@ namespace ExcData
 					}
 					else if (i == 66)
 					{
-						ushort Item_Id = KartExcData.PartsList[select][11];
-						ushort Grade = (byte)KartExcData.PartsList[select][12];
-						ushort PartsValue = KartExcData.PartsList[select][13];
+						short Item_Id = KartExcData.PartsList[select][11];
+						short Grade = (byte)KartExcData.PartsList[select][12];
+						short PartsValue = KartExcData.PartsList[select][13];
 						if (PartsValue != 0)
 						{
 							TuneSpec.PartSpec_NormalBoosterTime = KartExcData.PartsList[select][13] * 1.0f - 940.0f + 3000.0f;

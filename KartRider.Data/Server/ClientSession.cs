@@ -178,7 +178,7 @@ namespace KartRider
 						//iPacket.ReadByte();
 						//SetRiderItem.Set_slotBg = iPacket.ReadByte();
 						SetRiderItem.Save_SetRiderItem();
-						TuneSpec.Use_PartsSpec((ushort)SetRiderItem.Set_Kart, (ushort)SetRiderItem.Set_KartSN);
+						TuneSpec.Use_PartsSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);
 						TuneSpec.Use_TuneSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);
 						TuneSpec.Use_PlantSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);
 						TuneSpec.Use_KartLevelSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);
@@ -571,9 +571,9 @@ namespace KartRider
 					{
 						iPacket.ReadByte();
 						iPacket.ReadShort();
-						ushort Kart = iPacket.ReadUShort();
+						short Kart = iPacket.ReadShort();
 						iPacket.ReadShort();
-						ushort SN = iPacket.ReadUShort();
+						short SN = iPacket.ReadShort();
 						KartExcData.AddPartsList(Kart, SN, 63, 0, 0, 0);
 						KartExcData.AddPartsList(Kart, SN, 64, 0, 0, 0);
 						KartExcData.AddPartsList(Kart, SN, 65, 0, 0, 0);
@@ -803,15 +803,15 @@ namespace KartRider
 					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqUnequipXPartsItem", 0))
 					{
-						ushort Kart = iPacket.ReadUShort();
-						ushort SN = iPacket.ReadUShort();
-						ushort item = iPacket.ReadUShort();
+						short Kart = iPacket.ReadShort();
+						short SN = iPacket.ReadShort();
+						short item = iPacket.ReadShort();
 						using (OutPacket outPacket = new OutPacket("PrUnequipXPartsItem"))
 						{
 							outPacket.WriteInt(0);
-							outPacket.WriteUShort(Kart);
-							outPacket.WriteUShort(SN);
-							outPacket.WriteUShort(item);
+							outPacket.WriteShort(Kart);
+							outPacket.WriteShort(SN);
+							outPacket.WriteShort(item);
 							this.Parent.Client.Send(outPacket);
 						}
 						KartExcData.AddPartsList(Kart, SN, item, 0, 0, 0);
@@ -819,28 +819,28 @@ namespace KartRider
 					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqEquipXPartsItem", 0))
 					{
-						ushort Kart = iPacket.ReadUShort();
-						ushort KartSN = iPacket.ReadUShort();
-						ushort Item_Cat_Id = iPacket.ReadUShort();
-						ushort Item_Id = iPacket.ReadUShort();
+						short Kart = iPacket.ReadShort();
+						short KartSN = iPacket.ReadShort();
+						short Item_Cat_Id = iPacket.ReadShort();
+						short Item_Id = iPacket.ReadShort();
 						short Quantity = iPacket.ReadShort();
 						short Unk1 = iPacket.ReadShort();
 						byte Grade = iPacket.ReadByte();
 						byte Unk2 = iPacket.ReadByte();
-						ushort PartsValue = iPacket.ReadUShort();
+						short PartsValue = iPacket.ReadShort();
 						short Unk3 = iPacket.ReadShort();
 						using (OutPacket outPacket = new OutPacket("PrEquipXPartsItem"))
 						{
 							outPacket.WriteInt(0);
-							outPacket.WriteUShort(Kart);
-							outPacket.WriteUShort(KartSN);
-							outPacket.WriteUShort(Item_Cat_Id);
-							outPacket.WriteUShort(Item_Id);
+							outPacket.WriteShort(Kart);
+							outPacket.WriteShort(KartSN);
+							outPacket.WriteShort(Item_Cat_Id);
+							outPacket.WriteShort(Item_Id);
 							outPacket.WriteShort(Quantity);
 							outPacket.WriteShort(Unk1);
 							outPacket.WriteByte(Grade);
 							outPacket.WriteByte(Unk2);
-							outPacket.WriteUShort(PartsValue);
+							outPacket.WriteShort(PartsValue);
 							outPacket.WriteShort(Unk3);
 							this.Parent.Client.Send(outPacket);
 						}

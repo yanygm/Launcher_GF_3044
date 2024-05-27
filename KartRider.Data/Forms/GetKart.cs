@@ -52,7 +52,7 @@ namespace KartRider
 							doc.Save(@"Profile\NewKart.xml");
 						}
 						Console.WriteLine("NewKart: {0}:{1}", GetKart.Item_Code, sn);
-						KartExcData.AddPartsList((ushort)GetKart.Item_Code, (ushort)sn, 63, 0, 0, 0);
+						KartExcData.AddPartsList(GetKart.Item_Code, sn, 63, 0, 0, 0);
 						using (OutPacket outPacket = new OutPacket("PrRequestKartInfoPacket"))
 						{
 							outPacket.WriteByte(1);
@@ -77,7 +77,7 @@ namespace KartRider
 							outPacket.WriteInt(1);
 							outPacket.WriteShort(GetKart.Item_Type);
 							outPacket.WriteShort(GetKart.Item_Code);
-							outPacket.WriteUShort(0);
+							outPacket.WriteShort(0);
 							outPacket.WriteShort(1);//수량
 							outPacket.WriteShort(0);
 							outPacket.WriteShort(-1);
