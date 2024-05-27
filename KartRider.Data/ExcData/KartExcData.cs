@@ -12,7 +12,7 @@ namespace ExcData
 		public static List<List<short>> TuneList = new List<List<short>>();
 		public static List<List<short>> PlantList = new List<List<short>>();
 		public static List<List<short>> LevelList = new List<List<short>>();
-		public static List<List<short>> PartsList = new List<List<short>>();
+		public static List<List<ushort>> PartsList = new List<List<ushort>>();
 
 		public static void Tune_ExcData()
 		{
