@@ -408,7 +408,7 @@ namespace ExcData
 			}
 		}
 
-		public static void AddPartsList(short id, short sn, short Item_Cat_Id, short Item_Id, byte Grade, short PartsValue)
+		public static void AddPartsList(ushort id, ushort sn, ushort Item_Cat_Id, ushort Item_Id, byte Grade, ushort PartsValue)
 		{
 			int Add = -1;
 			for (var i = 0; i < PartsList.Count; i++)
@@ -421,7 +421,7 @@ namespace ExcData
 			}
 			if (Add == -1)
 			{
-				List<short> AddList = new List<short>();
+				List<ushort> AddList = new List<ushort>();
 				AddList.Add(id);
 				AddList.Add(sn);
 				AddList.Add(0);
