@@ -404,9 +404,9 @@ namespace KartRider
 						ushort sn = ushort.Parse(xe.GetAttribute("sn"));
 						ushort Item_Id1 = ushort.Parse(xe.GetAttribute("Item_Id1"));
 						byte Grade1 = byte.Parse(xe.GetAttribute("Grade1"));
-						short PartsValue1 = ushort.Parse(xe.GetAttribute("PartsValue1"));
+						ushort PartsValue1 = ushort.Parse(xe.GetAttribute("PartsValue1"));
 						ushort Item_Id2 = ushort.Parse(xe.GetAttribute("Item_Id2"));
-						byte Grade2 = ubyte.Parse(xe.GetAttribute("Grade2"));
+						byte Grade2 = byte.Parse(xe.GetAttribute("Grade2"));
 						ushort PartsValue2 = ushort.Parse(xe.GetAttribute("PartsValue2"));
 						ushort Item_Id3 = ushort.Parse(xe.GetAttribute("Item_Id3"));
 						byte Grade3 = byte.Parse(xe.GetAttribute("Grade3"));
