@@ -1350,7 +1350,7 @@ namespace ExcData
 					{
 						short Item_Id = KartExcData.PartsList[select][2];
 						short Grade = KartExcData.PartsList[select][3];
-						short PartsValue = KartExcData.PartsList[select][4];
+						ushort PartsValue = KartExcData.PartsList[select][4];
 						if (PartsValue != 0)
 						{
 							TuneSpec.PartSpec_TransAccelFactor = (KartExcData.PartsList[select][4] * 1.0f - 800.0f) / 25000.0f + 1.85f + -0.205f;
@@ -1364,7 +1364,7 @@ namespace ExcData
 					{
 						short Item_Id = KartExcData.PartsList[select][5];
 						short Grade = (byte)KartExcData.PartsList[select][6];
-						short PartsValue = KartExcData.PartsList[select][7];
+						ushort PartsValue = KartExcData.PartsList[select][7];
 						if (PartsValue != 0)
 						{
 							TuneSpec.PartSpec_SteerConstraint = (KartExcData.PartsList[select][7] * 1.0f - 800.0f) / 250.0f + 2.1f + 20.3f;
@@ -1378,7 +1378,7 @@ namespace ExcData
 					{
 						short Item_Id = KartExcData.PartsList[select][8];
 						short Grade = (byte)KartExcData.PartsList[select][9];
-						short PartsValue = KartExcData.PartsList[select][10];
+						ushort PartsValue = KartExcData.PartsList[select][10];
 						if (PartsValue != 0)
 						{
 							TuneSpec.PartSpec_DriftEscapeForce = KartExcData.PartsList[select][10] * 2.0f + 2200.0f;
@@ -1392,7 +1392,7 @@ namespace ExcData
 					{
 						short Item_Id = KartExcData.PartsList[select][11];
 						short Grade = (byte)KartExcData.PartsList[select][12];
-						short PartsValue = KartExcData.PartsList[select][13];
+						ushort PartsValue = KartExcData.PartsList[select][13];
 						if (PartsValue != 0)
 						{
 							TuneSpec.PartSpec_NormalBoosterTime = KartExcData.PartsList[select][13] * 1.0f - 940.0f + 3000.0f;
