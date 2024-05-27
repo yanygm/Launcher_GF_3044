@@ -1348,8 +1348,8 @@ namespace ExcData
 				{
 					if (i == 63)
 					{
-						short Item_Id = KartExcData.PartsList[select][2];
-						short Grade = KartExcData.PartsList[select][3];
+						ushort Item_Id = KartExcData.PartsList[select][2];
+						ushort Grade = KartExcData.PartsList[select][3];
 						ushort PartsValue = KartExcData.PartsList[select][4];
 						if (PartsValue != 0)
 						{
@@ -1362,8 +1362,8 @@ namespace ExcData
 					}
 					else if (i == 64)
 					{
-						short Item_Id = KartExcData.PartsList[select][5];
-						short Grade = (byte)KartExcData.PartsList[select][6];
+						ushort Item_Id = KartExcData.PartsList[select][5];
+						ushort Grade = (byte)KartExcData.PartsList[select][6];
 						ushort PartsValue = KartExcData.PartsList[select][7];
 						if (PartsValue != 0)
 						{
@@ -1376,8 +1376,8 @@ namespace ExcData
 					}
 					else if (i == 65)
 					{
-						short Item_Id = KartExcData.PartsList[select][8];
-						short Grade = (byte)KartExcData.PartsList[select][9];
+						ushort Item_Id = KartExcData.PartsList[select][8];
+						ushort Grade = (byte)KartExcData.PartsList[select][9];
 						ushort PartsValue = KartExcData.PartsList[select][10];
 						if (PartsValue != 0)
 						{
@@ -1390,8 +1390,8 @@ namespace ExcData
 					}
 					else if (i == 66)
 					{
-						short Item_Id = KartExcData.PartsList[select][11];
-						short Grade = (byte)KartExcData.PartsList[select][12];
+						ushort Item_Id = KartExcData.PartsList[select][11];
+						ushort Grade = (byte)KartExcData.PartsList[select][12];
 						ushort PartsValue = KartExcData.PartsList[select][13];
 						if (PartsValue != 0)
 						{

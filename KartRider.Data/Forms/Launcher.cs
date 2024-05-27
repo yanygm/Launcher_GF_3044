@@ -400,22 +400,22 @@ namespace KartRider
 					foreach (XmlNode xn in lis)
 					{
 						XmlElement xe = (XmlElement)xn;
-						short i = short.Parse(xe.GetAttribute("id"));
-						short sn = short.Parse(xe.GetAttribute("sn"));
-						short Item_Id1 = short.Parse(xe.GetAttribute("Item_Id1"));
+						ushort i = ushort.Parse(xe.GetAttribute("id"));
+						ushort sn = ushort.Parse(xe.GetAttribute("sn"));
+						ushort Item_Id1 = ushort.Parse(xe.GetAttribute("Item_Id1"));
 						byte Grade1 = byte.Parse(xe.GetAttribute("Grade1"));
 						short PartsValue1 = ushort.Parse(xe.GetAttribute("PartsValue1"));
-						short Item_Id2 = short.Parse(xe.GetAttribute("Item_Id2"));
-						byte Grade2 = byte.Parse(xe.GetAttribute("Grade2"));
-						short PartsValue2 = ushort.Parse(xe.GetAttribute("PartsValue2"));
-						short Item_Id3 = short.Parse(xe.GetAttribute("Item_Id3"));
+						ushort Item_Id2 = ushort.Parse(xe.GetAttribute("Item_Id2"));
+						byte Grade2 = ubyte.Parse(xe.GetAttribute("Grade2"));
+						ushort PartsValue2 = ushort.Parse(xe.GetAttribute("PartsValue2"));
+						ushort Item_Id3 = ushort.Parse(xe.GetAttribute("Item_Id3"));
 						byte Grade3 = byte.Parse(xe.GetAttribute("Grade3"));
-						short PartsValue3 = ushort.Parse(xe.GetAttribute("PartsValue3"));
-						short Item_Id4 = short.Parse(xe.GetAttribute("Item_Id4"));
+						ushort PartsValue3 = ushort.Parse(xe.GetAttribute("PartsValue3"));
+						ushort Item_Id4 = ushort.Parse(xe.GetAttribute("Item_Id4"));
 						byte Grade4 = byte.Parse(xe.GetAttribute("Grade4"));
-						short PartsValue4 = ushort.Parse(xe.GetAttribute("PartsValue4"));
-						short partsCoating = byte.Parse(xe.GetAttribute("partsCoating"));
-						short partsTailLamp = short.Parse(xe.GetAttribute("partsTailLamp"));
+						ushort PartsValue4 = ushort.Parse(xe.GetAttribute("PartsValue4"));
+						ushort partsCoating = byte.Parse(xe.GetAttribute("partsCoating"));
+						ushort partsTailLamp = ushort.Parse(xe.GetAttribute("partsTailLamp"));
 						List<ushort> AddList = new List<ushort>();
 						AddList.Add(i);
 						AddList.Add(sn);
