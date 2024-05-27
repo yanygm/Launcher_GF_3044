@@ -52,7 +52,7 @@ namespace KartRider
 							doc.Save(@"Profile\NewKart.xml");
 						}
 						Console.WriteLine("NewKart: {0}:{1}", GetKart.Item_Code, sn);
-						KartExcData.AddPartsList(GetKart.Item_Code, sn, 63, 0, 0, 0);
+						KartExcData.AddPartsList((ushort)GetKart.Item_Code, (ushort)sn, 63, 0, 0, 0);
 						using (OutPacket outPacket = new OutPacket("PrRequestKartInfoPacket"))
 						{
 							outPacket.WriteByte(1);

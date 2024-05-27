@@ -511,7 +511,7 @@ namespace ExcData
 			}
 		}
 
-		public static void SavePartsList(List<List<short>> List)
+		public static void SavePartsList(List<List<ushort>> List)
 		{
 			File.Delete(@"Profile\PartsData.xml");
 			XmlTextWriter writer = new XmlTextWriter(@"Profile\PartsData.xml", System.Text.Encoding.UTF8);
