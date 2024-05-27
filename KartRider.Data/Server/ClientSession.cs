@@ -178,7 +178,7 @@ namespace KartRider
 						//iPacket.ReadByte();
 						//SetRiderItem.Set_slotBg = iPacket.ReadByte();
 						SetRiderItem.Save_SetRiderItem();
-						TuneSpec.Use_PartsSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);
+						TuneSpec.Use_PartsSpec((ushort)SetRiderItem.Set_Kart, (ushort)SetRiderItem.Set_KartSN);
 						TuneSpec.Use_TuneSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);
 						TuneSpec.Use_PlantSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);
 						TuneSpec.Use_KartLevelSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);

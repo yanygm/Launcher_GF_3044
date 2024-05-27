@@ -1331,7 +1331,7 @@ namespace ExcData
 			}
 		}
 
-		public static void Use_PartsSpec(short id, short sn)
+		public static void Use_PartsSpec(ushort id, ushort sn)
 		{
 			int select = -1;
 			for (var i = 0; i < KartExcData.PartsList.Count; i++)
