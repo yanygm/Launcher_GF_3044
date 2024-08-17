@@ -49,7 +49,7 @@ namespace KartRider
 				iPacket.Position = 0;
 				uint hash = iPacket.ReadUInt();
 				//Console.WriteLine(hash);
-				if ((hash == Adler32Helper.GenerateAdler32(Encoding.ASCII.GetBytes("PcReportRaidOccur"), 0) ? false : hash != 1340475309))
+				if ((hash == Adler32Helper.GenerateAdler32(Encoding.ASCII.GetBytes("PcReportRaidOccur"), 0) ? false : hash != 1340475309))//PqGameReportMyBadUdp
 				{
 					if (hash == Adler32Helper.GenerateAdler32_ASCII("GrRiderTalkPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqEnterMagicHatPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("LoPingRequestPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqGetRiderQuestUX2ndData", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqAddTimeEventInitPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqCountdownBoxPeriodPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqServerSideUdpBindCheck", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqVipGradeCheck", 0))
 					{
@@ -59,7 +59,7 @@ namespace KartRider
 					{
 						return;
 					}
-					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqBlockWordLogPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqWriteActionLogPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqMissionAttendPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqAddTimeEventTimerPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqTimeShopOpenTimePacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqItemPresetSlotDataList", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("VipPlaytimeCheck", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("LoRqEventRewardPacket", 0) || hash == 2415659644)
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqBlockWordLogPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqWriteActionLogPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqMissionAttendPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqAddTimeEventTimerPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqTimeShopOpenTimePacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqItemPresetSlotDataList", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("VipPlaytimeCheck", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("LoRqEventRewardPacket", 0))
 					{
 						//PqGetRecommandChatServerInfo = 라이더 챗
 						return;
@@ -175,8 +175,8 @@ namespace KartRider
 						SetRiderItem.Set_KartSN = iPacket.ReadShort();
 						short Set_KartEffect = iPacket.ReadShort();
 						short Set_KartBoosterEffect = iPacket.ReadShort();
-						//iPacket.ReadByte();
-						//SetRiderItem.Set_slotBg = iPacket.ReadByte();
+						iPacket.ReadByte();
+						SetRiderItem.Set_slotBg = iPacket.ReadByte();
 						SetRiderItem.Save_SetRiderItem();
 						TuneSpec.Use_PartsSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);
 						TuneSpec.Use_TuneSpec(SetRiderItem.Set_Kart, SetRiderItem.Set_KartSN);
@@ -200,7 +200,7 @@ namespace KartRider
 								outPacket.WriteString(SetRider.Nickname);
 								outPacket.WriteUShort(DataTime()[0]);
 								outPacket.WriteUShort(DataTime()[1]);
-								for (int i = 1; i <= Program.MAX_EQP_P; i++)
+								for (int i = 0; i <= Program.MAX_EQP_P; i++)
 								{
 									outPacket.WriteShort(0);
 								}
@@ -323,8 +323,8 @@ namespace KartRider
 						SetGameOption.Unk15 = iPacket.ReadByte();
 						SetGameOption.Unk16 = iPacket.ReadByte();
 						SetGameOption.Unk17 = iPacket.ReadByte();
-						//SetGameOption.Set_screen = iPacket.ReadByte();
-						//SetGameOption.Unk18 = iPacket.ReadByte();
+						SetGameOption.Set_screen = iPacket.ReadByte();
+						SetGameOption.Unk18 = iPacket.ReadByte();
 						SetGameOption.Save_SetGameOption();
 						return;
 					}
@@ -397,7 +397,7 @@ namespace KartRider
 							outPacket.WriteUInt(SetRider.UserNO);
 							outPacket.WriteBytes(new byte[12]);
 							outPacket.WriteString(SetRider.Nickname);
-							outPacket.WriteBytes(new byte[65]);
+							outPacket.WriteBytes(new byte[67]);
 							outPacket.WriteInt(SetRider.RP);
 							outPacket.WriteBytes(new byte[910]);
 							this.Parent.Client.Send(outPacket);
@@ -465,7 +465,14 @@ namespace KartRider
 					{
 						using (OutPacket outPacket = new OutPacket("PrChapterInfoPacket"))
 						{
-							outPacket.WriteInt(0);
+							outPacket.WriteInt(56);
+							for (int i = 1; i <= 56; i++)
+							{
+								outPacket.WriteInt(i | 0x1000000);
+								outPacket.WriteInt((int)(Math.Pow(2, 20) - 1));
+								outPacket.WriteInt(0);
+								outPacket.WriteByte(0);
+							}
 							this.Parent.Client.Send(outPacket);
 						}
 						return;
@@ -1156,7 +1163,7 @@ namespace KartRider
 					{
 						using (OutPacket outPacket = new OutPacket("PrSearchClubListPacket"))
 						{
-							outPacket.WriteHexString("0C 00 00 00 7F 3D 00 00 04 00 00 00 1C 75 C7 8F 1D 52 4B 60 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 07 00 00 00 00 00 00 00 07 00 00 00 0B 4E E8 96 56 00 52 00 61 00 69 00 6E 00 64 00 00 00 E7 AA 50 46 0F 00 00 00 A1 6C C0 4E 48 4E 79 72 7F 95 2C 00 31 5C 2F 66 65 55 FD 90 1A 4F B9 70 2E 00 2E 00 2E 00 00 05 C4 D6 6E 01 5D 37 00 00 08 00 00 00 D0 67 9D 5B 1C 64 EB 77 C5 60 E5 5D 5C 4F A4 5B 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 1C 01 00 00 00 00 00 00 06 00 00 00 13 4E 1A 4E 37 52 5A 80 50 4E E8 90 13 00 00 00 A3 AA B7 2A 4C 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3D 00 3D 00 3D 00 3D 00 D1 8D D1 8D 94 54 01 4E 66 8F 20 00 D8 98 FB 79 3D 00 3D 00 3D 00 3D 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 A4 7F 3A 00 37 00 39 00 30 00 30 00 33 00 33 00 36 00 31 00 37 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 7D 59 0B 67 CB 53 00 4E 77 8D D8 98 00 04 8F 1C 4E 00 04 00 00 00 07 00 00 00 70 4E F7 53 7E 62 57 53 EF 67 00 4E A6 68 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8C 01 00 00 00 00 00 00 08 00 00 00 41 00 61 00 70 00 65 00 4E 00 69 00 63 00 6F 00 51 00 00 00 33 AA 99 2A 43 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 66 8F 1F 96 27 59 CF 91 36 65 BA 4E 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 66 8F 1F 96 A5 63 85 5F A4 7F 20 00 33 00 38 00 37 00 32 00 32 00 37 00 37 00 39 00 20 00 1F 96 7F 95 51 00 33 00 35 00 39 00 39 00 31 00 31 00 32 00 39 00 34 00 01 04 DA 93 27 00 DF 21 00 00 04 00 00 00 28 4E 18 7F 2F 54 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 70 01 00 00 00 00 00 00 04 00 00 00 CC 51 75 70 36 4E 63 00 14 00 00 00 47 AA EF 2E 2F 00 00 00 2E 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3C 00 20 00 20 00 20 00 22 6B 20 00 11 7B 20 00 C5 60 20 00 82 59 20 00 E7 65 20 00 2D 00 20 00 27 84 20 00 8F 75 20 00 13 9B 20 00 F2 5D 20 00 91 65 20 00 20 00 3E 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 05 50 6B 20 00 64 3E 00 00 04 00 00 00 52 00 69 00 63 00 68 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8B 01 00 00 00 00 00 00 07 00 00 00 52 00 69 00 63 00 68 00 CE 8F A8 60 65 67 5B 00 00 00 F4 AA CF 4E 5E 00 00 00 20 00 20 00 20 00 20 00 20 00 52 00 69 00 63 00 68 00 94 4E A7 7E 66 8F 1F 96 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 22 6B CE 8F A8 60 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3B 4E A9 73 E0 65 50 96 20 00 20 00 20 00 20 00 20 00 20 00 66 8F 1F 96 03 80 38 68 A5 63 85 5F A4 7F 3A 00 35 00 32 00 37 00 31 00 32 00 36 00 39 00 38 00 37 00 00 04 3C 45 14 00 7A 49 00 00 05 00 00 00 08 54 A6 7E 36 65 CF 85 B6 5B 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8B 01 00 00 00 00 00 00 06 00 00 00 48 00 79 00 4C 4E 7F 89 EA 8F 7F 89 24 00 00 00 5D AB AB 36 05 00 00 00 5E 97 F7 8B FF 52 65 51 2E 00 00 04 D4 1E 11 00 8F 55 00 00 06 00 00 00 28 4E 5D 4E 29 59 FD 63 08 67 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8F 01 00 00 00 00 00 00 06 00 00 00 3D 63 1F 66 B8 82 50 6C E5 82 36 4E 30 00 00 00 A4 AB 44 52 07 00 00 00 66 8F 1F 96 82 66 F6 65 0D 4E 36 65 BA 4E 00 04 90 6D 10 00 AD 0B 00 00 06 00 00 00 28 4E A2 7E D7 65 66 8F 1F 96 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 06 00 00 00 A2 7E D7 65 85 8D A7 7E 66 5B 38 97 19 00 00 00 33 AA 4C 4A 03 00 00 00 20 00 20 00 20 00 00 04 EC 39 10 00 75 01 00 00 06 00 00 00 28 4E 0D 54 1F 66 66 8F 1F 96 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 70 01 00 00 00 00 00 00 05 00 00 00 0D 54 1F 66 01 80 05 5E E5 54 33 01 00 00 33 AA 6B 2B 54 00 00 00 0D 54 1F 66 F1 4F 50 4E E8 90 2F 66 CC 53 94 4E A7 7E CC 53 EE 4F F1 4F 50 4E E8 90 20 00 DE 7A 1F 90 3B 4E 53 62 53 00 32 00 20 00 53 90 77 51 3A 4E 4E 4F 1F 90 CC 53 81 79 8C 54 26 5E 01 95 20 00 16 59 A4 4E A4 7F A4 7F F7 53 3A 4E 33 00 31 00 36 00 36 00 34 00 31 00 32 00 30 00 30 00 20 00 22 6B CE 8F FF 7E 72 82 A9 73 B6 5B A0 52 65 51 20 00 81 89 42 6C 39 65 0D 54 20 00 D1 53 B0 73 28 75 85 8F A9 52 D1 8D 66 8F 20 00 05 6E 06 74 20 00 0C 5E 1B 67 27 59 B6 5B 92 4E F8 76 D1 76 63 77 3E 4E A5 62 00 05 06 82 09 00 31 15 00 00 06 00 00 00 28 4E 64 8D DA 8B 4B 4E C3 5F 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 71 01 00 00 00 00 00 00 0A 00 00 00 45 00 73 00 70 00 65 00 63 00 69 00 61 00 6C 00 1F 96 7F 95 1F 00 00 00 36 AA 63 24 4C 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 4E 47 72 64 8D DA 8B 4B 4E C3 5F 20 00 B3 7E B0 65 A4 7F 31 00 30 00 35 00 36 00 39 00 31 00 39 00 38 00 36 00 31 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 2A 67 39 65 0D 54 00 4E 8B 5F 0D 4E 88 4E 1A 90 C7 8F 20 00 20 00 20 00 3C 68 0F 5F 20 00 20 00 20 00 64 8D DA 8B 78 00 78 00 78 00 78 00 00 04 C5 1A 05 00 F7 32 00 00 08 00 00 00 50 00 6C 00 61 00 79 00 43 00 6C 00 75 00 62 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 07 00 00 00 50 00 6C 00 61 00 79 00 CC 51 CE 98 76 00 9C 00 00 00 81 AA 71 25 49 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 50 00 6C 00 61 00 79 00 20 00 2D 00 20 00 43 00 6C 00 75 00 62 00 20 00 2D 00 20 00 46 00 6F 00 72 00 65 00 76 00 65 00 72 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 04 9A E7 03 00 6B 20 00 00 03 00 00 00 28 4E 6A 8C 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 75 00 00 00 00 00 00 00 02 00 00 00 AB 5B 34 83 3E 00 00 00 43 AA E0 01 25 00 00 00 53 90 77 51 66 8F 1F 96 20 00 20 00 20 00 00 97 81 89 39 65 0D 54 20 00 20 00 20 00 A5 63 85 5F A4 7F 20 00 31 00 20 00 31 00 20 00 35 00 20 00 39 00 20 00 30 00 20 00 35 00 20 00 33 00 20 00 35 00 20 00 32 00 20 00 36 00 00 05 CF 9C 03 00 01");
+							outPacket.WriteHexString("0C 00 00 00 7F 3D 00 00 04 00 00 00 1C 75 C7 8F 1D 52 4B 60 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 07 00 00 00 00 00 00 00 07 00 00 00 0B 4E E8 96 56 00 52 00 61 00 69 00 6E 00 64 00 00 00 E7 AA 50 46 0F 00 00 00 A1 6C C0 4E 48 4E 79 72 7F 95 2C 00 31 5C 2F 66 65 55 FD 90 1A 4F B9 70 2E 00 2E 00 2E 00 00 05 C4 D6 6E 01 5D 37 00 00 08 00 00 00 D0 67 9D 5B 1C 64 EB 77 C5 60 E5 5D 5C 4F A4 5B 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 1C 01 00 00 00 00 00 00 06 00 00 00 13 4E 1A 4E 37 52 5A 80 50 4E E8 90 1B 00 00 00 A3 AA B7 2A 4C 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3D 00 3D 00 3D 00 3D 00 D1 8D D1 8D 94 54 01 4E 66 8F 20 00 D8 98 FB 79 3D 00 3D 00 3D 00 3D 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 A4 7F 3A 00 37 00 39 00 30 00 30 00 33 00 33 00 36 00 31 00 37 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 7D 59 0B 67 CB 53 00 4E 77 8D D8 98 00 04 8F 1C 4E 00 04 00 00 00 07 00 00 00 59 00 78 00 36 4E 54 00 65 00 61 00 6D 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 92 01 00 00 00 00 00 00 05 00 00 00 59 00 78 00 36 4E 1F 96 7F 95 24 00 00 00 33 AA 99 2A 46 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 28 4E E0 65 50 96 66 8F 1F 96 28 4E 20 00 66 8F 1F 96 03 80 38 68 36 65 BA 4E 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 A5 63 85 5F 2F 00 03 80 38 68 71 00 A4 7F 3B 00 34 00 39 00 39 00 33 00 33 00 33 00 33 00 31 00 31 00 20 00 00 04 DA 93 27 00 DF 21 00 00 04 00 00 00 28 4E 18 7F 2F 54 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 70 01 00 00 00 00 00 00 04 00 00 00 CC 51 75 70 36 4E 63 00 14 00 00 00 47 AA EF 2E 2F 00 00 00 2E 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3C 00 20 00 20 00 20 00 22 6B 20 00 11 7B 20 00 C5 60 20 00 82 59 20 00 E7 65 20 00 2D 00 20 00 27 84 20 00 8F 75 20 00 13 9B 20 00 F2 5D 20 00 91 65 20 00 20 00 3E 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 05 50 6B 20 00 64 3E 00 00 04 00 00 00 52 00 69 00 63 00 68 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8B 01 00 00 00 00 00 00 07 00 00 00 52 00 69 00 63 00 68 00 CE 8F A8 60 65 67 60 00 00 00 F4 AA CF 4E 5E 00 00 00 20 00 20 00 20 00 20 00 20 00 52 00 69 00 63 00 68 00 94 4E A7 7E 66 8F 1F 96 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 22 6B CE 8F A8 60 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3B 4E A9 73 E0 65 50 96 20 00 20 00 20 00 20 00 20 00 20 00 66 8F 1F 96 03 80 38 68 A5 63 85 5F A4 7F 3A 00 35 00 32 00 37 00 31 00 32 00 36 00 39 00 38 00 37 00 00 04 3C 45 14 00 7A 49 00 00 05 00 00 00 08 54 A6 7E 36 65 CF 85 B6 5B 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 06 00 00 00 48 00 79 00 2C 7B 00 4E 73 59 4C 80 23 00 00 00 5D AB AB 36 05 00 00 00 5E 97 F7 8B FF 52 65 51 2E 00 00 04 D4 1E 11 00 8F 55 00 00 06 00 00 00 28 4E 5D 4E 29 59 FD 63 08 67 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8F 01 00 00 00 00 00 00 06 00 00 00 3D 63 1F 66 B8 82 50 6C E5 82 36 4E 30 00 00 00 A4 AB 44 52 07 00 00 00 66 8F 1F 96 82 66 F6 65 0D 4E 36 65 BA 4E 00 04 90 6D 10 00 AD 0B 00 00 06 00 00 00 28 4E A2 7E D7 65 66 8F 1F 96 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 06 00 00 00 A2 7E D7 65 85 8D A7 7E 66 5B 38 97 18 00 00 00 33 AA 4C 4A 25 00 00 00 65 51 1F 96 81 89 42 6C 3A 00 66 8F 93 5E E5 62 09 67 A2 7E D7 65 68 51 FB 7C 66 8F 86 8F 2C 00 3A 7F 00 4E 0D 4E EF 53 2C 00 26 7B 08 54 81 89 42 6C 84 76 A0 52 A4 7F 31 00 32 00 39 00 30 00 34 00 33 00 33 00 37 00 32 00 00 04 EC 39 10 00 75 01 00 00 06 00 00 00 28 4E 0D 54 1F 66 66 8F 1F 96 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 95 01 00 00 00 00 00 00 05 00 00 00 0D 54 1F 66 01 80 05 5E E5 54 33 01 00 00 33 AA 6B 2B 54 00 00 00 0D 54 1F 66 F1 4F 50 4E E8 90 2F 66 CC 53 94 4E A7 7E CC 53 EE 4F F1 4F 50 4E E8 90 20 00 DE 7A 1F 90 3B 4E 53 62 53 00 32 00 20 00 53 90 77 51 3A 4E 4E 4F 1F 90 CC 53 81 79 8C 54 26 5E 01 95 20 00 16 59 A4 4E A4 7F A4 7F F7 53 3A 4E 33 00 31 00 36 00 36 00 34 00 31 00 32 00 30 00 30 00 20 00 22 6B CE 8F FF 7E 72 82 A9 73 B6 5B A0 52 65 51 20 00 81 89 42 6C 39 65 0D 54 20 00 D1 53 B0 73 28 75 85 8F A9 52 D1 8D 66 8F 20 00 05 6E 06 74 20 00 0C 5E 1B 67 27 59 B6 5B 92 4E F8 76 D1 76 63 77 3E 4E A5 62 00 05 06 82 09 00 31 15 00 00 06 00 00 00 28 4E 64 8D DA 8B 4B 4E C3 5F 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 71 01 00 00 00 00 00 00 06 00 00 00 64 8D DA 8B 28 4E 6B 84 A6 82 28 4E 1C 00 00 00 36 AA 63 24 4C 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 4E 47 72 64 8D DA 8B 4B 4E C3 5F 20 00 B3 7E B0 65 A4 7F 31 00 30 00 35 00 36 00 39 00 31 00 39 00 38 00 36 00 31 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 2A 67 39 65 0D 54 00 4E 8B 5F 0D 4E 88 4E 1A 90 C7 8F 20 00 20 00 20 00 3C 68 0F 5F 20 00 20 00 20 00 64 8D DA 8B 28 4E 78 00 78 00 28 4E 00 04 C5 1A 05 00 F7 32 00 00 08 00 00 00 50 00 6C 00 61 00 79 00 43 00 6C 00 75 00 62 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 06 00 00 00 50 00 6C 00 61 00 79 00 1C 4E CE 98 A0 00 00 00 81 AA 71 25 49 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 50 00 6C 00 61 00 79 00 20 00 2D 00 20 00 43 00 6C 00 75 00 62 00 20 00 2D 00 20 00 46 00 6F 00 72 00 65 00 76 00 65 00 72 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 04 9A E7 03 00 6B 20 00 00 03 00 00 00 28 4E 6A 8C 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 03 00 00 00 00 00 00 00 02 00 00 00 E4 4E 77 83 3F 00 00 00 43 AA E0 01 25 00 00 00 53 90 77 51 66 8F 1F 96 20 00 20 00 20 00 00 97 81 89 39 65 0D 54 20 00 20 00 20 00 A5 63 85 5F A4 7F 20 00 31 00 20 00 31 00 20 00 35 00 20 00 39 00 20 00 30 00 20 00 35 00 20 00 33 00 20 00 35 00 20 00 32 00 20 00 36 00 00 05 CF 9C 03 00 01");
 							this.Parent.Client.Send(outPacket);
 						}
 						return;
@@ -1934,7 +1941,7 @@ namespace KartRider
 							outPacket.WriteString(SessionGroup.Service);
 							outPacket.WriteInt(0);
 							outPacket.WriteByte(0);
-							//outPacket.WriteByte(SetGameOption.Set_screen);
+							outPacket.WriteByte(SetGameOption.Set_screen);
 							outPacket.WriteByte(SetRider.IdentificationType);
 							RouterListener.MySession.Client.Send(outPacket);
 						}
@@ -1951,6 +1958,40 @@ namespace KartRider
 					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqEnterShopPacket", 0))
 					{
+						return;
+					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqGetlotteryMileageInfoPacket", 0))
+					{
+						using (OutPacket outPacket = new OutPacket("PrGetlotteryMileageInfoPacket"))
+						{
+							outPacket.WriteInt(0);
+							this.Parent.Client.Send(outPacket);
+						}
+						return;
+					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqTcCashEventUserInfoPacket", 0))
+					{
+						int unk1 = iPacket.ReadInt();
+						using (OutPacket outPacket = new OutPacket("PrTcCashEventUserInfoPacket"))
+						{
+							outPacket.WriteInt(unk1);
+							outPacket.WriteInt(0);
+							outPacket.WriteInt(0);
+							this.Parent.Client.Send(outPacket);
+						}
+						return;
+					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqServerSideUdpBindCheck", 0))
+					{
+						return;
+					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqQuestUX2ndForShutDownPacket", 0))
+					{
+						using (OutPacket outPacket = new OutPacket("PrQuestUX2ndForShutDownPacket"))
+						{
+							outPacket.WriteInt(0);
+							this.Parent.Client.Send(outPacket);
+						}
 						return;
 					}
 				}
