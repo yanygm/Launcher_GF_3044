@@ -479,6 +479,9 @@
 	<Character id='463' />
 	<Character id='464' />
 	<Character id='465' />
+	<Character id='30000' />
+	<Character id='30001' />
+	<Character id='30002' />
 	<!--item itemCatId='21' itemName='宠物'-->
 	<Pet id='30000' />
 	<Pet id='30002' />
