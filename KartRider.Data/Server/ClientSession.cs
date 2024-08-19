@@ -804,16 +804,12 @@ namespace KartRider
 						TuneSpec.Use_PlantSpec(Kart_Id, SN);
 						using (OutPacket outPacket = new OutPacket("PrEquipTuningPacket"))
 						{
-							outPacket.WriteInt(0);
-							this.Parent.Client.Send(outPacket);
-						}
-						return;
-					}
-					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqEquipTuningPacket", 0))
-					{
-						using (OutPacket outPacket = new OutPacket("PrEquipTuningPacket"))
-						{
-							outPacket.WriteInt(0);
+							outPacket.WriteByte(1);
+							outPacket.WriteShort(SN);
+							outPacket.WriteShort(SN);
+							outPacket.WriteShort(Kart_Id);
+							outPacket.WriteShort(Item);
+							outPacket.WriteShort(Item_Id);
 							this.Parent.Client.Send(outPacket);
 						}
 						return;
