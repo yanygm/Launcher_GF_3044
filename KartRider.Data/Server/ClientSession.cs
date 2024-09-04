@@ -213,7 +213,7 @@ namespace KartRider
 								outPacket.WriteString(SetRider.Nickname);
 								outPacket.WriteUShort((ushort)DataTime()[0]);
 								outPacket.WriteUShort((ushort)DataTime()[1]);
-								for (int i = 0; i <= Program.MAX_EQP_P; i++)
+								for (int i = 1; i <= Program.MAX_EQP_P; i++)
 								{
 									outPacket.WriteShort(0);
 								}
