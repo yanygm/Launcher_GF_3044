@@ -15,7 +15,7 @@ namespace KartRider
 
 		static Program()
 		{
-			Program.MAX_EQP_P = 31;
+			Program.MAX_EQP_P = 32;
 			Program.Developer_Name = true;
 		}
 
