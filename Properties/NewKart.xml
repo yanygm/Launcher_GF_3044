@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <NewKart>
 	<Kart id='1' sn='1' />
 	<Kart id='2' sn='1' />
@@ -1060,7 +1060,12 @@
 	<Kart id='1505' sn='1' />
 	<Kart id='1506' sn='1' />
 	<Kart id='1507' sn='1' />
-	<!--'三服车辆补全'-->
+	<Kart id='1508' sn='1' />
+	<Kart id='1509' sn='1' />
+	<Kart id='1510' sn='1' />
+	<Kart id='1511' sn='1' />
+	<Kart id='1512' sn='1' />
+	<!--'三服车辆补全'>
 	<Kart id='35' sn='1' />
 	<Kart id='42' sn='1' />
 	<Kart id='43' sn='1' />
@@ -1399,5 +1404,5 @@
 	<Kart id='1429' sn='1' />
 	<Kart id='1434' sn='1' />
 	<Kart id='1437' sn='1' />
-	<Kart id='1441' sn='1' />
+	<Kart id='1441' sn='1' /-->
 </NewKart>

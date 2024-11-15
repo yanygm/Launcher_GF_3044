@@ -33,7 +33,7 @@ namespace Set_Data
 		public static byte Unk15 = 1;
 		public static byte Unk16 = 1;
 		public static byte Unk17 = 1;
-		public static byte Set_screen = 1;
+		public static byte Set_screen = 0;
 		public static byte Unk18 = 0;
 
 		public static void Save_SetGameOption()

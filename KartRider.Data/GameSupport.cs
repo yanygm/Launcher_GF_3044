@@ -199,6 +199,10 @@ namespace KartRider
 			{
 				outPacket.WriteInt(1);
 				outPacket.WriteInt(1);
+				outPacket.WriteInt(0);
+				/*
+				outPacket.WriteInt(1);
+				outPacket.WriteInt(1);
 				outPacket.WriteInt(All_Quest);
 				for (int i = 1372; i <= 1378; i++)
 				{
@@ -215,6 +219,7 @@ namespace KartRider
 						outPacket.WriteByte(0);
 					}
 				}
+				*/
 				RouterListener.MySession.Client.Send(outPacket);
 			}
 		}

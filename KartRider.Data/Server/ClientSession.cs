@@ -10,7 +10,7 @@ using ExcData;
 using Set_Data;
 using RiderData;
 using System.Xml;
-using System.Windows.Forms;
+using System.Linq;
 
 namespace KartRider
 {
@@ -35,7 +35,6 @@ namespace KartRider
 		public int[] DataTime()
 		{
 			DateTime dt = DateTime.Now;
-			//DateTime dt = new DateTime(1900, 1, 1, 0, 0, 0);
 			DateTime time = new DateTime(1900, 1, 1, 0, 0, 0);
 			TimeSpan t = dt.Subtract(time);
 			double totalSeconds = dt.TimeOfDay.TotalSeconds / 4;
@@ -61,7 +60,18 @@ namespace KartRider
 			{
 				iPacket.Position = 0;
 				uint hash = iPacket.ReadUInt();
-				//Console.WriteLine(hash);
+				if (hash == Adler32Helper.GenerateAdler32_ASCII("PqCnAuthenLogin", 0))
+				{
+					using (OutPacket outPacket = new OutPacket("PrCnAuthenLogin"))
+					{
+						outPacket.WriteInt(1);
+						outPacket.WriteString("pnlcdfngkdjfdhdermnkicqknmqrnjnkrlpdirerjrqkcllhpckngophnrrfclgiojmopomonkjilgmheoldpmmcdokgdqljqcnkrplffhflqdnchherghnhoihgfnon");
+						outPacket.WriteByte(0);
+						outPacket.WriteString("https://www.tiancity.com/agreement");
+						this.Parent.Client.Send(outPacket);
+					}
+					return;
+				}
 				if ((hash == Adler32Helper.GenerateAdler32(Encoding.ASCII.GetBytes("PcReportRaidOccur"), 0) ? false : hash != 1340475309))//PqGameReportMyBadUdp
 				{
 					if (hash == Adler32Helper.GenerateAdler32_ASCII("GrRiderTalkPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqEnterMagicHatPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("LoPingRequestPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqGetRiderQuestUX2ndData", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqAddTimeEventInitPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqCountdownBoxPeriodPacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqServerSideUdpBindCheck", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqVipGradeCheck", 0))
@@ -168,7 +178,7 @@ namespace KartRider
 						SetRiderItem.Set_HandGearL = iPacket.ReadShort();
 						iPacket.ReadShort();
 						SetRiderItem.Set_Uniform = iPacket.ReadShort();
-						iPacket.ReadShort();
+						SetRiderItem.Set_Decal = iPacket.ReadShort();
 						SetRiderItem.Set_Pet = iPacket.ReadShort();
 						SetRiderItem.Set_FlyingPet = iPacket.ReadShort();
 						SetRiderItem.Set_Aura = iPacket.ReadShort();
@@ -213,13 +223,10 @@ namespace KartRider
 								outPacket.WriteString(SetRider.Nickname);
 								outPacket.WriteUShort((ushort)DataTime()[0]);
 								outPacket.WriteUShort((ushort)DataTime()[1]);
-								for (int i = 1; i <= Program.MAX_EQP_P; i++)
-								{
-									outPacket.WriteShort(0);
-								}
+								outPacket.WriteBytes(new byte[64]);
 								outPacket.WriteByte(0);
-								outPacket.WriteString("");
-								outPacket.WriteInt(SetRider.RP);
+								outPacket.WriteString("Y|S");
+								outPacket.WriteUInt(SetRider.RP);
 								outPacket.WriteInt(0);
 								outPacket.WriteByte(6);//Licenses
 								outPacket.WriteUShort((ushort)DataTime()[0]);
@@ -416,7 +423,7 @@ namespace KartRider
 							outPacket.WriteBytes(new byte[12]);
 							outPacket.WriteString(SetRider.Nickname);
 							outPacket.WriteBytes(new byte[65]);
-							outPacket.WriteInt(SetRider.RP);
+							outPacket.WriteUInt(SetRider.RP);
 							outPacket.WriteBytes(new byte[910]);
 							this.Parent.Client.Send(outPacket);
 						}
@@ -599,18 +606,42 @@ namespace KartRider
 						short Kart = iPacket.ReadShort();
 						iPacket.ReadShort();
 						short SN = iPacket.ReadShort();
+						iPacket.ReadBytes(6);
+						byte[] data = iPacket.ReadBytes(28);
+						using (OutPacket outPacket = new OutPacket("PrDisassembleXPartsItem"))
+						{
+							outPacket.WriteInt(0);
+							outPacket.WriteShort(3);
+							outPacket.WriteShort(0);
+							outPacket.WriteShort(0);
+							outPacket.WriteShort(0);
+							outPacket.WriteInt(0);
+							outPacket.WriteShort(0);
+							outPacket.WriteShort(Kart);
+							outPacket.WriteShort(1);
+							outPacket.WriteShort(0);
+							outPacket.WriteByte(1);
+							outPacket.WriteByte(2);
+							outPacket.WriteShort(0);
+							outPacket.WriteShort(0);
+							outPacket.WriteBytes(data);
+							outPacket.WriteUInt(SetRider.Lucci);
+							outPacket.WriteUInt(SetRider.Koin);
+							this.Parent.Client.Send(outPacket);
+						}
 						KartExcData.AddPartsList(Kart, SN, 63, 0, 0, 0);
 						KartExcData.AddPartsList(Kart, SN, 64, 0, 0, 0);
 						KartExcData.AddPartsList(Kart, SN, 65, 0, 0, 0);
 						KartExcData.AddPartsList(Kart, SN, 66, 0, 0, 0);
+						KartExcData.AddPartsList(Kart, SN, 68, 0, 0, 0);
+						KartExcData.AddPartsList(Kart, SN, 69, 0, 0, 0);
 						KartExcData.AddPlantList(Kart, SN, 43, 0);
 						KartExcData.AddPlantList(Kart, SN, 44, 0);
 						KartExcData.AddPlantList(Kart, SN, 45, 0);
 						KartExcData.AddPlantList(Kart, SN, 46, 0);
 						TuneSpec.Use_PartsSpec(Kart, SN);
 						TuneSpec.Use_PlantSpec(Kart, SN);
-						GameSupport.OnDisconnect();
-						MessageBox.Show("已重置该车辆部件，请重新启动游戏！", "重置车辆部件", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						//GameSupport.OnDisconnect();
 						return;
 					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqKartLevelUpProbText", 0))
@@ -648,8 +679,8 @@ namespace KartRider
 							outPacket.WriteInt(0);
 							outPacket.WriteShort(Kart2);
 							outPacket.WriteShort(SN2);
-							outPacket.WriteInt(10000);
-							outPacket.WriteInt(1000000);
+							outPacket.WriteUInt(SetRider.Koin);
+							outPacket.WriteUInt(SetRider.Lucci);
 							outPacket.WriteInt(0);
 							this.Parent.Client.Send(outPacket);
 						}
@@ -666,30 +697,6 @@ namespace KartRider
 						short v4 = iPacket.ReadShort();
 						short pointleft = 0;
 						short Effect = 0;
-						int Add = -1;
-						for (var i = 0; i < KartExcData.LevelList.Count; i++)
-						{
-							if (KartExcData.LevelList[i][0] == Kart && KartExcData.LevelList[i][1] == SN)
-							{
-								Add = i;
-								break;
-							}
-						}
-						if (Add == -1)
-						{
-							pointleft = (short)(35 - v1 - v2 - v3 - v4);
-							KartExcData.AddLevelList(Kart, SN, 5, pointleft, v1, v2, v3, v4, 0);
-						}
-						else if (Add > -1)
-						{
-							pointleft = (short)(KartExcData.LevelList[Add][3] - v1 - v2 - v3 - v4);
-							v1 = (short)(KartExcData.LevelList[Add][4] + v1);
-							v2 = (short)(KartExcData.LevelList[Add][5] + v2);
-							v3 = (short)(KartExcData.LevelList[Add][6] + v3);
-							v4 = (short)(KartExcData.LevelList[Add][7] + v4);
-							Effect = KartExcData.LevelList[Add][8];
-							KartExcData.AddLevelList(Kart, SN, 5, pointleft, v1, v2, v3, v4, Effect);
-						}
 						using (OutPacket outPacket = new OutPacket("PrKartLevelPointUpdate"))
 						{
 							outPacket.WriteInt(1);
@@ -705,6 +712,24 @@ namespace KartRider
 							this.Parent.Client.Send(outPacket);
 						}
 						TuneSpec.Use_KartLevelSpec(Kart, SN);
+						var kartLevelList = KartExcData.LevelList;
+						var kartAndSN = new { Kart, SN };
+						var existingLevelList = kartLevelList.FirstOrDefault(list => list[0] == kartAndSN.Kart && list[1] == kartAndSN.SN);
+						if (existingLevelList == null)
+						{
+							pointleft = (short)(35 - v1 - v2 - v3 - v4);
+							KartExcData.AddLevelList(kartAndSN.Kart, kartAndSN.SN, 5, pointleft, v1, v2, v3, v4, 0);
+						}
+						else
+						{
+							pointleft = (short)(existingLevelList[3] - v1 - v2 - v3 - v4);
+							short v1New = (short)(existingLevelList[4] + v1);
+							short v2New = (short)(existingLevelList[5] + v2);
+							short v3New = (short)(existingLevelList[6] + v3);
+							short v4New = (short)(existingLevelList[7] + v4);
+							short effect = existingLevelList[8];
+							KartExcData.AddLevelList(kartAndSN.Kart, kartAndSN.SN, 5, pointleft, v1New, v2New, v3New, v4New, effect);
+						}
 						return;
 					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("SpRqGetMaxGiftIdPacket", 0))
@@ -716,40 +741,29 @@ namespace KartRider
 						short Kart = iPacket.ReadShort();
 						short SN = iPacket.ReadShort();
 						short Effect = iPacket.ReadShort();
-						int Level = -1;
-						for (var i = 0; i < KartExcData.LevelList.Count; i++)
+
+						var kartLevelList = KartExcData.LevelList;
+						var kartAndSN = new { Kart, SN };
+						var existingLevelList = kartLevelList.FirstOrDefault(list => list[0] == kartAndSN.Kart && list[1] == kartAndSN.SN);
+
+						using (OutPacket outPacket = new OutPacket("PrKartLevelSpecialSlotUpdate"))
 						{
-							if (KartExcData.LevelList[i][0] == Kart && KartExcData.LevelList[i][1] == SN)
+							outPacket.WriteInt(1);
+							outPacket.WriteShort(kartAndSN.Kart);
+							outPacket.WriteShort(kartAndSN.SN);
+							if (existingLevelList != null)
 							{
-								Level = i;
-								break;
-							}
-						}
-						if (Level > -1)
-						{
-							using (OutPacket outPacket = new OutPacket("PrKartLevelSpecialSlotUpdate"))
-							{
-								outPacket.WriteInt(1);
-								outPacket.WriteShort(Kart);
-								outPacket.WriteShort(SN);
-								outPacket.WriteShort(KartExcData.LevelList[Level][2]);
-								outPacket.WriteShort(KartExcData.LevelList[Level][3]);
-								outPacket.WriteShort(KartExcData.LevelList[Level][4]);
-								outPacket.WriteShort(KartExcData.LevelList[Level][5]);
-								outPacket.WriteShort(KartExcData.LevelList[Level][6]);
-								outPacket.WriteShort(KartExcData.LevelList[Level][7]);
+								outPacket.WriteShort(existingLevelList[2]);
+								outPacket.WriteShort(existingLevelList[3]);
+								outPacket.WriteShort(existingLevelList[4]);
+								outPacket.WriteShort(existingLevelList[5]);
+								outPacket.WriteShort(existingLevelList[6]);
+								outPacket.WriteShort(existingLevelList[7]);
 								outPacket.WriteShort(Effect);
-								this.Parent.Client.Send(outPacket);
+								KartExcData.AddLevelList(kartAndSN.Kart, kartAndSN.SN, existingLevelList[2], existingLevelList[3], existingLevelList[4], existingLevelList[5], existingLevelList[6], existingLevelList[7], Effect);
 							}
-							KartExcData.AddLevelList(Kart, SN, KartExcData.LevelList[Level][2], KartExcData.LevelList[Level][3], KartExcData.LevelList[Level][4], KartExcData.LevelList[Level][5], KartExcData.LevelList[Level][6], KartExcData.LevelList[Level][7], Effect);
-						}
-						else
-						{
-							using (OutPacket outPacket = new OutPacket("PrKartLevelSpecialSlotUpdate"))
+							else
 							{
-								outPacket.WriteInt(1);
-								outPacket.WriteShort(Kart);
-								outPacket.WriteShort(SN);
 								outPacket.WriteShort(5);
 								outPacket.WriteShort(0);
 								outPacket.WriteShort(10);
@@ -757,9 +771,9 @@ namespace KartRider
 								outPacket.WriteShort(10);
 								outPacket.WriteShort(5);
 								outPacket.WriteShort(Effect);
-								this.Parent.Client.Send(outPacket);
+								KartExcData.AddLevelList(kartAndSN.Kart, kartAndSN.SN, 5, 0, 10, 10, 10, 5, Effect);
 							}
-							KartExcData.AddLevelList(Kart, SN, 5, 0, 10, 10, 10, 5, Effect);
+							this.Parent.Client.Send(outPacket);
 						}
 						return;
 					}
@@ -787,6 +801,7 @@ namespace KartRider
 							outPacket.WriteString("使用粒子激活器R直接获得启变佳！");
 							this.Parent.Client.Send(outPacket);
 						}
+						KartExcData.AddTuneList(Kart, KartSN, 0, 0, 0, -1, 0, -1, 0);
 						return;
 					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqUseTuneItem", 0))
@@ -797,39 +812,170 @@ namespace KartRider
 						iPacket.ReadShort();
 						short KartSN = iPacket.ReadShort();
 						Random random = new Random();
-						List<string> numbers = new List<string>();
-						if (Item == 5)
+						var existingList = KartExcData.TuneList.FirstOrDefault(list => list[0] == Kart && list[1] == KartSN);
+						if (existingList != null)
 						{
-							numbers.Add("603");
-							numbers.Add("703");
-							numbers.Add("903");
-						}
-						else
-						{
-							while (numbers.Count < 3)
+							if (Item == 5)
 							{
-								string number = random.Next(1, 10).ToString() + "03";
-								if (!numbers.Contains(number))
+								using (OutPacket outPacket = new OutPacket("PrUseTuneItem"))
 								{
-									numbers.Add(number);
+									outPacket.WriteInt(0);
+									outPacket.WriteShort(Item);
+									outPacket.WriteShort(Item_Id);
+									outPacket.WriteShort(Kart);
+									outPacket.WriteShort(KartSN);
+									outPacket.WriteShort(0);
+									outPacket.WriteShort(603);
+									outPacket.WriteShort(703);
+									outPacket.WriteShort(903);
+									outPacket.WriteShort(existingList[5]);
+									outPacket.WriteShort(existingList[6]);
+									outPacket.WriteShort(existingList[7]);
+									outPacket.WriteShort(existingList[8]);
+									this.Parent.Client.Send(outPacket);
 								}
 							}
+							else
+							{
+								List<short> tuneList1 = new List<short> { existingList[2], existingList[3], existingList[4] };
+								List<short> tuneList2 = new List<short>();
+								using (OutPacket outPacket = new OutPacket("PrUseTuneItem"))
+								{
+									outPacket.WriteInt(0);
+									outPacket.WriteShort(Item);
+									outPacket.WriteShort(Item_Id);
+									outPacket.WriteShort(Kart);
+									outPacket.WriteShort(KartSN);
+									outPacket.WriteShort(0);
+									if (existingList[2] != 0)
+									{
+										outPacket.WriteShort(existingList[2]);
+									}
+									else
+									{
+										while (tuneList1.Count < 4)
+										{
+											short number = short.Parse(random.Next(1, 10).ToString() + "03");
+											if (!tuneList1.Contains(number))
+											{
+												outPacket.WriteShort(number);
+												existingList[2] = number;
+												tuneList1.Add(number);
+												tuneList2.Add(number);
+											}
+										}
+										tuneList1.RemoveAt(3);
+									}
+									if (existingList[3] != 0)
+									{
+										outPacket.WriteShort(existingList[3]);
+									}
+									else
+									{
+										while (tuneList1.Count < 4)
+										{
+											short number = short.Parse(random.Next(1, 10).ToString() + "03");
+											if (!tuneList1.Contains(number))
+											{
+												if (!tuneList2.Contains(number))
+												{
+													outPacket.WriteShort(number);
+													existingList[3] = number;
+													tuneList1.Add(number);
+													tuneList2.Add(number);
+												}
+											}
+										}
+										tuneList1.RemoveAt(3);
+									}
+									if (existingList[4] != 0)
+									{
+										outPacket.WriteShort(existingList[4]);
+									}
+									else
+									{
+										while (tuneList1.Count < 4)
+										{
+											short number = short.Parse(random.Next(1, 10).ToString() + "03");
+											if (!tuneList1.Contains(number))
+											{
+												if (!tuneList2.Contains(number))
+												{
+													outPacket.WriteShort(number);
+													existingList[4] = number;
+													tuneList1.Add(number);
+													tuneList2.Add(number);
+												}
+											}
+										}
+										tuneList1.RemoveAt(3);
+									}
+									outPacket.WriteShort(existingList[5]);
+									outPacket.WriteShort(existingList[6]);
+									outPacket.WriteShort(existingList[7]);
+									outPacket.WriteShort(existingList[8]);
+									this.Parent.Client.Send(outPacket);
+								}
+							}
+							KartExcData.SaveTuneList(KartExcData.TuneList);
+							TuneSpec.Use_TuneSpec(Kart, KartSN);
 						}
-						KartExcData.AddTuneList(Kart, KartSN, short.Parse(numbers[0]), short.Parse(numbers[1]), short.Parse(numbers[2]));
-						TuneSpec.Use_TuneSpec(Kart, KartSN);
-						using (OutPacket outPacket = new OutPacket("PrUseTuneItem"))
+						return;
+					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqUseProtectSpannerItem", 0))
+					{
+						short Protect = iPacket.ReadShort();
+						short v2 = iPacket.ReadShort();
+						short Item_Id = iPacket.ReadShort();
+						short Kart = iPacket.ReadShort();
+						short KartSN = iPacket.ReadShort();
+						iPacket.ReadShort();
+						short slot = iPacket.ReadShort();
+						var existingList = KartExcData.TuneList.FirstOrDefault(list => list[0] == Kart && list[1] == KartSN);
+						if (existingList != null)
 						{
-							outPacket.WriteInt(0);
-							outPacket.WriteShort(Item);
-							outPacket.WriteShort(Item_Id);
-							outPacket.WriteShort(Kart);
-							outPacket.WriteShort(KartSN);
-							outPacket.WriteShort(0);
-							outPacket.WriteShort(short.Parse(numbers[0]));
-							outPacket.WriteShort(short.Parse(numbers[1]));
-							outPacket.WriteShort(short.Parse(numbers[2]));
-							outPacket.WriteHexString("00 00 00 00 00 00 00 00");
-							this.Parent.Client.Send(outPacket);
+							using (OutPacket outPacket = new OutPacket("PrUseProtectSpannerItem"))
+							{
+								outPacket.WriteInt(0);
+								outPacket.WriteShort(Protect);
+								outPacket.WriteShort(v2);
+								outPacket.WriteShort(Item_Id);
+								outPacket.WriteShort(Kart);
+								outPacket.WriteShort(KartSN);
+								outPacket.WriteShort(0);
+								outPacket.WriteShort(0);
+								outPacket.WriteShort(0);
+								outPacket.WriteShort(existingList[2]);
+								outPacket.WriteShort(existingList[3]);
+								outPacket.WriteShort(existingList[4]);
+								if (Protect == 49)
+								{
+									outPacket.WriteShort(slot);
+									outPacket.WriteShort(4);
+									outPacket.WriteShort(existingList[7]);
+									outPacket.WriteShort(existingList[8]);
+									existingList[5] = slot;
+									existingList[6] = 4;
+								}
+								else if (Protect == 53)
+								{
+									outPacket.WriteShort(existingList[5]);
+									outPacket.WriteShort(existingList[6]);
+									outPacket.WriteShort(slot);
+									outPacket.WriteShort(3);
+									existingList[7] = slot;
+									existingList[8] = 3;
+								}
+								else
+								{
+									outPacket.WriteShort(existingList[5]);
+									outPacket.WriteShort(existingList[6]);
+									outPacket.WriteShort(existingList[7]);
+									outPacket.WriteShort(existingList[8]);
+								}
+								this.Parent.Client.Send(outPacket);
+								KartExcData.SaveTuneList(KartExcData.TuneList);
+							}
 						}
 						return;
 					}
@@ -840,17 +986,64 @@ namespace KartRider
 						short Kart = iPacket.ReadShort();
 						iPacket.ReadShort();
 						short KartSN = iPacket.ReadShort();
-						KartExcData.DelTuneList(Kart, KartSN);
-						TuneSpec.Use_TuneSpec(Kart, KartSN);
-						using (OutPacket outPacket = new OutPacket("PrUseResetSocketItem"))
+						var existingList = KartExcData.TuneList.FirstOrDefault(list => list[0] == Kart && list[1] == KartSN);
+						if (existingList != null)
 						{
-							outPacket.WriteInt(0);
-							outPacket.WriteShort(Item);
-							outPacket.WriteShort(Item_Id);
-							outPacket.WriteShort(Kart);
-							outPacket.WriteShort(KartSN);
-							outPacket.WriteHexString("22 00 4C 00 01 00 01 00 00 00 00 00 FF FF 00 00 00 00 00 00 00 00");
-							this.Parent.Client.Send(outPacket);
+							using (OutPacket outPacket = new OutPacket("PrUseResetSocketItem"))
+							{
+								outPacket.WriteInt(0);
+								outPacket.WriteShort(Item);
+								outPacket.WriteShort(Item_Id);
+								outPacket.WriteShort(Kart);
+								outPacket.WriteShort(KartSN);
+								outPacket.WriteShort(34);
+								outPacket.WriteShort(76);
+								outPacket.WriteShort(1);
+								outPacket.WriteShort(1);
+								outPacket.WriteShort(existingList[2]);
+								outPacket.WriteShort(existingList[3]);
+								outPacket.WriteShort(existingList[4]);
+								outPacket.WriteShort(existingList[5]);
+								outPacket.WriteShort(existingList[6]);
+								outPacket.WriteShort(existingList[7]);
+								outPacket.WriteShort(existingList[8]);
+								this.Parent.Client.Send(outPacket);
+							}
+							List<short> secure = new List<short>();
+							if (existingList[6] == 0)
+							{
+								existingList[5] = -1;
+							}
+							else
+							{
+								existingList[6] = (short)((int)existingList[6] - 1);
+							}
+							if (existingList[8] == 0)
+							{
+								existingList[7] = -1;
+							}
+							else
+							{
+								existingList[8] = (short)((int)existingList[8] - 1);
+							}
+							Console.WriteLine("TuneProtect: " + existingList[5] + ", " + existingList[7]);
+							Console.WriteLine("TuneProtectCount: " + existingList[6] + ", " + existingList[8]);
+							for (int i = 2; i <= 4; i++)
+							{
+								if (existingList[5] != -1 && (int)(existingList[5]) + 2 == i)
+								{
+								}
+								else if (existingList[7] != -1 && (int)(existingList[7]) + 2 == i)
+								{
+								}
+								else
+								{
+									existingList[i] = 0;
+								}
+							}
+							Console.WriteLine("TuneList: " + existingList[2] + ", " + existingList[3] + ", " + existingList[4]);
+							KartExcData.SaveTuneList(KartExcData.TuneList);
+							TuneSpec.Use_TuneSpec(Kart, KartSN);
 						}
 						return;
 					}
@@ -919,7 +1112,7 @@ namespace KartRider
 							this.Parent.Client.Send(outPacket);
 						}
 						KartExcData.AddPartsList(Kart, KartSN, Item_Cat_Id, Item_Id, Grade, PartsValue);
-						Console.WriteLine("ClientSession : Kart: {0}, KartSN: {1}, Item: {2}:{3}, Quantity: {4}, Grade: {5}, PartsValue: {6}", Kart, KartSN, Item_Cat_Id,Item_Id, Quantity, Grade, PartsValue);
+						Console.WriteLine("ClientSession : Kart: {0}, KartSN: {1}, Item: {2}:{3}, Quantity: {4}, Grade: {5}, PartsValue: {6}", Kart, KartSN, Item_Cat_Id, Item_Id, Quantity, Grade, PartsValue);
 						TuneSpec.Use_PartsSpec(Kart, KartSN);
 						return;
 					}
@@ -1078,7 +1271,7 @@ namespace KartRider
 						{
 							outPacket.WriteInt(type);
 							outPacket.WriteHexString("00 00 00 00 00 00 00 00 00 00 00 00 FF FF FF FF 00 00 00 00 00");
-							outPacket.WriteInt(GameType.TimeAttack_RP);//RP
+							outPacket.WriteUInt(GameType.TimeAttack_RP);//RP
 							outPacket.WriteUInt(GameType.TimeAttack_Lucci);//LUCCI
 							this.Parent.Client.Send(outPacket);
 						}
@@ -1229,7 +1422,7 @@ namespace KartRider
 					{
 						using (OutPacket outPacket = new OutPacket("PrSearchClubListPacket"))
 						{
-							outPacket.WriteHexString("0C 00 00 00 7F 3D 00 00 04 00 00 00 1C 75 C7 8F 1D 52 4B 60 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 07 00 00 00 00 00 00 00 07 00 00 00 0B 4E E8 96 56 00 52 00 61 00 69 00 6E 00 64 00 00 00 E7 AA 50 46 0F 00 00 00 A1 6C C0 4E 48 4E 79 72 7F 95 2C 00 31 5C 2F 66 65 55 FD 90 1A 4F B9 70 2E 00 2E 00 2E 00 00 05 C4 D6 6E 01 5D 37 00 00 08 00 00 00 D0 67 9D 5B 1C 64 EB 77 C5 60 E5 5D 5C 4F A4 5B 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 1C 01 00 00 00 00 00 00 06 00 00 00 13 4E 1A 4E 37 52 5A 80 50 4E E8 90 13 00 00 00 A3 AA B7 2A 4C 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3D 00 3D 00 3D 00 3D 00 D1 8D D1 8D 94 54 01 4E 66 8F 20 00 D8 98 FB 79 3D 00 3D 00 3D 00 3D 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 A4 7F 3A 00 37 00 39 00 30 00 30 00 33 00 33 00 36 00 31 00 37 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 7D 59 0B 67 CB 53 00 4E 77 8D D8 98 00 04 8F 1C 4E 00 04 00 00 00 07 00 00 00 70 4E F7 53 7E 62 57 53 EF 67 00 4E A6 68 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8C 01 00 00 00 00 00 00 08 00 00 00 41 00 61 00 70 00 65 00 4E 00 69 00 63 00 6F 00 51 00 00 00 33 AA 99 2A 43 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 66 8F 1F 96 27 59 CF 91 36 65 BA 4E 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 66 8F 1F 96 A5 63 85 5F A4 7F 20 00 33 00 38 00 37 00 32 00 32 00 37 00 37 00 39 00 20 00 1F 96 7F 95 51 00 33 00 35 00 39 00 39 00 31 00 31 00 32 00 39 00 34 00 01 04 DA 93 27 00 DF 21 00 00 04 00 00 00 28 4E 18 7F 2F 54 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 70 01 00 00 00 00 00 00 04 00 00 00 CC 51 75 70 36 4E 63 00 14 00 00 00 47 AA EF 2E 2F 00 00 00 2E 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3C 00 20 00 20 00 20 00 22 6B 20 00 11 7B 20 00 C5 60 20 00 82 59 20 00 E7 65 20 00 2D 00 20 00 27 84 20 00 8F 75 20 00 13 9B 20 00 F2 5D 20 00 91 65 20 00 20 00 3E 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 05 50 6B 20 00 64 3E 00 00 04 00 00 00 52 00 69 00 63 00 68 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8B 01 00 00 00 00 00 00 07 00 00 00 52 00 69 00 63 00 68 00 CE 8F A8 60 65 67 5B 00 00 00 F4 AA CF 4E 5E 00 00 00 20 00 20 00 20 00 20 00 20 00 52 00 69 00 63 00 68 00 94 4E A7 7E 66 8F 1F 96 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 22 6B CE 8F A8 60 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3B 4E A9 73 E0 65 50 96 20 00 20 00 20 00 20 00 20 00 20 00 66 8F 1F 96 03 80 38 68 A5 63 85 5F A4 7F 3A 00 35 00 32 00 37 00 31 00 32 00 36 00 39 00 38 00 37 00 00 04 3C 45 14 00 7A 49 00 00 05 00 00 00 08 54 A6 7E 36 65 CF 85 B6 5B 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8B 01 00 00 00 00 00 00 06 00 00 00 48 00 79 00 4C 4E 7F 89 EA 8F 7F 89 24 00 00 00 5D AB AB 36 05 00 00 00 5E 97 F7 8B FF 52 65 51 2E 00 00 04 D4 1E 11 00 8F 55 00 00 06 00 00 00 28 4E 5D 4E 29 59 FD 63 08 67 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8F 01 00 00 00 00 00 00 06 00 00 00 3D 63 1F 66 B8 82 50 6C E5 82 36 4E 30 00 00 00 A4 AB 44 52 07 00 00 00 66 8F 1F 96 82 66 F6 65 0D 4E 36 65 BA 4E 00 04 90 6D 10 00 AD 0B 00 00 06 00 00 00 28 4E A2 7E D7 65 66 8F 1F 96 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 06 00 00 00 A2 7E D7 65 85 8D A7 7E 66 5B 38 97 19 00 00 00 33 AA 4C 4A 03 00 00 00 20 00 20 00 20 00 00 04 EC 39 10 00 75 01 00 00 06 00 00 00 28 4E 0D 54 1F 66 66 8F 1F 96 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 70 01 00 00 00 00 00 00 05 00 00 00 0D 54 1F 66 01 80 05 5E E5 54 33 01 00 00 33 AA 6B 2B 54 00 00 00 0D 54 1F 66 F1 4F 50 4E E8 90 2F 66 CC 53 94 4E A7 7E CC 53 EE 4F F1 4F 50 4E E8 90 20 00 DE 7A 1F 90 3B 4E 53 62 53 00 32 00 20 00 53 90 77 51 3A 4E 4E 4F 1F 90 CC 53 81 79 8C 54 26 5E 01 95 20 00 16 59 A4 4E A4 7F A4 7F F7 53 3A 4E 33 00 31 00 36 00 36 00 34 00 31 00 32 00 30 00 30 00 20 00 22 6B CE 8F FF 7E 72 82 A9 73 B6 5B A0 52 65 51 20 00 81 89 42 6C 39 65 0D 54 20 00 D1 53 B0 73 28 75 85 8F A9 52 D1 8D 66 8F 20 00 05 6E 06 74 20 00 0C 5E 1B 67 27 59 B6 5B 92 4E F8 76 D1 76 63 77 3E 4E A5 62 00 05 06 82 09 00 31 15 00 00 06 00 00 00 28 4E 64 8D DA 8B 4B 4E C3 5F 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 71 01 00 00 00 00 00 00 0A 00 00 00 45 00 73 00 70 00 65 00 63 00 69 00 61 00 6C 00 1F 96 7F 95 1F 00 00 00 36 AA 63 24 4C 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 4E 47 72 64 8D DA 8B 4B 4E C3 5F 20 00 B3 7E B0 65 A4 7F 31 00 30 00 35 00 36 00 39 00 31 00 39 00 38 00 36 00 31 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 2A 67 39 65 0D 54 00 4E 8B 5F 0D 4E 88 4E 1A 90 C7 8F 20 00 20 00 20 00 3C 68 0F 5F 20 00 20 00 20 00 64 8D DA 8B 78 00 78 00 78 00 78 00 00 04 C5 1A 05 00 F7 32 00 00 08 00 00 00 50 00 6C 00 61 00 79 00 43 00 6C 00 75 00 62 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 07 00 00 00 50 00 6C 00 61 00 79 00 CC 51 CE 98 76 00 9C 00 00 00 81 AA 71 25 49 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 50 00 6C 00 61 00 79 00 20 00 2D 00 20 00 43 00 6C 00 75 00 62 00 20 00 2D 00 20 00 46 00 6F 00 72 00 65 00 76 00 65 00 72 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 04 9A E7 03 00 6B 20 00 00 03 00 00 00 28 4E 6A 8C 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 75 00 00 00 00 00 00 00 02 00 00 00 AB 5B 34 83 3E 00 00 00 43 AA E0 01 25 00 00 00 53 90 77 51 66 8F 1F 96 20 00 20 00 20 00 00 97 81 89 39 65 0D 54 20 00 20 00 20 00 A5 63 85 5F A4 7F 20 00 31 00 20 00 31 00 20 00 35 00 20 00 39 00 20 00 30 00 20 00 35 00 20 00 33 00 20 00 35 00 20 00 32 00 20 00 36 00 00 05 CF 9C 03 00 01");
+							outPacket.WriteHexString("0C 00 00 00 7F 3D 00 00 04 00 00 00 1C 75 C7 8F 1D 52 4B 60 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 07 00 00 00 00 00 00 00 07 00 00 00 0B 4E E8 96 56 00 52 00 61 00 69 00 6E 00 64 00 00 00 E7 AA 50 46 0F 00 00 00 A1 6C C0 4E 48 4E 79 72 7F 95 2C 00 31 5C 2F 66 65 55 FD 90 1A 4F B9 70 2E 00 2E 00 2E 00 00 05 C4 D6 6E 01 5D 37 00 00 08 00 00 00 D0 67 9D 5B 1C 64 EB 77 C5 60 E5 5D 5C 4F A4 5B 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 1C 01 00 00 00 00 00 00 06 00 00 00 13 4E 1A 4E 37 52 5A 80 50 4E E8 90 1B 00 00 00 A3 AA B7 2A 4C 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3D 00 3D 00 3D 00 3D 00 D1 8D D1 8D 94 54 01 4E 66 8F 20 00 D8 98 FB 79 3D 00 3D 00 3D 00 3D 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 A4 7F 3A 00 37 00 39 00 30 00 30 00 33 00 33 00 36 00 31 00 37 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 7D 59 0B 67 CB 53 00 4E 77 8D D8 98 00 04 8F 1C 4E 00 04 00 00 00 07 00 00 00 59 00 78 00 36 4E 54 00 65 00 61 00 6D 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 92 01 00 00 00 00 00 00 05 00 00 00 59 00 78 00 36 4E 1F 96 7F 95 24 00 00 00 33 AA 99 2A 46 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 28 4E E0 65 50 96 66 8F 1F 96 28 4E 20 00 66 8F 1F 96 03 80 38 68 36 65 BA 4E 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 A5 63 85 5F 2F 00 03 80 38 68 71 00 A4 7F 3B 00 34 00 39 00 39 00 33 00 33 00 33 00 33 00 31 00 31 00 20 00 00 04 DA 93 27 00 DF 21 00 00 04 00 00 00 28 4E 18 7F 2F 54 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 70 01 00 00 00 00 00 00 04 00 00 00 CC 51 75 70 36 4E 63 00 14 00 00 00 47 AA EF 2E 2F 00 00 00 2E 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3C 00 20 00 20 00 20 00 22 6B 20 00 11 7B 20 00 C5 60 20 00 82 59 20 00 E7 65 20 00 2D 00 20 00 27 84 20 00 8F 75 20 00 13 9B 20 00 F2 5D 20 00 91 65 20 00 20 00 3E 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 05 50 6B 20 00 64 3E 00 00 04 00 00 00 52 00 69 00 63 00 68 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8B 01 00 00 00 00 00 00 07 00 00 00 52 00 69 00 63 00 68 00 CE 8F A8 60 65 67 60 00 00 00 F4 AA CF 4E 5E 00 00 00 20 00 20 00 20 00 20 00 20 00 52 00 69 00 63 00 68 00 94 4E A7 7E 66 8F 1F 96 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 22 6B CE 8F A8 60 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 3B 4E A9 73 E0 65 50 96 20 00 20 00 20 00 20 00 20 00 20 00 66 8F 1F 96 03 80 38 68 A5 63 85 5F A4 7F 3A 00 35 00 32 00 37 00 31 00 32 00 36 00 39 00 38 00 37 00 00 04 3C 45 14 00 7A 49 00 00 05 00 00 00 08 54 A6 7E 36 65 CF 85 B6 5B 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 06 00 00 00 48 00 79 00 2C 7B 00 4E 73 59 4C 80 23 00 00 00 5D AB AB 36 05 00 00 00 5E 97 F7 8B FF 52 65 51 2E 00 00 04 D4 1E 11 00 8F 55 00 00 06 00 00 00 28 4E 5D 4E 29 59 FD 63 08 67 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 8F 01 00 00 00 00 00 00 06 00 00 00 3D 63 1F 66 B8 82 50 6C E5 82 36 4E 30 00 00 00 A4 AB 44 52 07 00 00 00 66 8F 1F 96 82 66 F6 65 0D 4E 36 65 BA 4E 00 04 90 6D 10 00 AD 0B 00 00 06 00 00 00 28 4E A2 7E D7 65 66 8F 1F 96 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 06 00 00 00 A2 7E D7 65 85 8D A7 7E 66 5B 38 97 18 00 00 00 33 AA 4C 4A 25 00 00 00 65 51 1F 96 81 89 42 6C 3A 00 66 8F 93 5E E5 62 09 67 A2 7E D7 65 68 51 FB 7C 66 8F 86 8F 2C 00 3A 7F 00 4E 0D 4E EF 53 2C 00 26 7B 08 54 81 89 42 6C 84 76 A0 52 A4 7F 31 00 32 00 39 00 30 00 34 00 33 00 33 00 37 00 32 00 00 04 EC 39 10 00 75 01 00 00 06 00 00 00 28 4E 0D 54 1F 66 66 8F 1F 96 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 95 01 00 00 00 00 00 00 05 00 00 00 0D 54 1F 66 01 80 05 5E E5 54 33 01 00 00 33 AA 6B 2B 54 00 00 00 0D 54 1F 66 F1 4F 50 4E E8 90 2F 66 CC 53 94 4E A7 7E CC 53 EE 4F F1 4F 50 4E E8 90 20 00 DE 7A 1F 90 3B 4E 53 62 53 00 32 00 20 00 53 90 77 51 3A 4E 4E 4F 1F 90 CC 53 81 79 8C 54 26 5E 01 95 20 00 16 59 A4 4E A4 7F A4 7F F7 53 3A 4E 33 00 31 00 36 00 36 00 34 00 31 00 32 00 30 00 30 00 20 00 22 6B CE 8F FF 7E 72 82 A9 73 B6 5B A0 52 65 51 20 00 81 89 42 6C 39 65 0D 54 20 00 D1 53 B0 73 28 75 85 8F A9 52 D1 8D 66 8F 20 00 05 6E 06 74 20 00 0C 5E 1B 67 27 59 B6 5B 92 4E F8 76 D1 76 63 77 3E 4E A5 62 00 05 06 82 09 00 31 15 00 00 06 00 00 00 28 4E 64 8D DA 8B 4B 4E C3 5F 28 4E 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 71 01 00 00 00 00 00 00 06 00 00 00 64 8D DA 8B 28 4E 6B 84 A6 82 28 4E 1C 00 00 00 36 AA 63 24 4C 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 4E 47 72 64 8D DA 8B 4B 4E C3 5F 20 00 B3 7E B0 65 A4 7F 31 00 30 00 35 00 36 00 39 00 31 00 39 00 38 00 36 00 31 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 2A 67 39 65 0D 54 00 4E 8B 5F 0D 4E 88 4E 1A 90 C7 8F 20 00 20 00 20 00 3C 68 0F 5F 20 00 20 00 20 00 64 8D DA 8B 28 4E 78 00 78 00 28 4E 00 04 C5 1A 05 00 F7 32 00 00 08 00 00 00 50 00 6C 00 61 00 79 00 43 00 6C 00 75 00 62 00 05 2C 01 00 00 FF FF FF FF 00 00 00 00 C0 C6 2D 00 75 00 00 00 00 00 00 00 06 00 00 00 50 00 6C 00 61 00 79 00 1C 4E CE 98 A0 00 00 00 81 AA 71 25 49 00 00 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 50 00 6C 00 61 00 79 00 20 00 2D 00 20 00 43 00 6C 00 75 00 62 00 20 00 2D 00 20 00 46 00 6F 00 72 00 65 00 76 00 65 00 72 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 00 04 9A E7 03 00 6B 20 00 00 03 00 00 00 28 4E 6A 8C 28 4E 05 F4 01 00 00 FF FF FF FF 00 00 00 00 40 4B 4C 00 03 00 00 00 00 00 00 00 02 00 00 00 E4 4E 77 83 3F 00 00 00 43 AA E0 01 25 00 00 00 53 90 77 51 66 8F 1F 96 20 00 20 00 20 00 00 97 81 89 39 65 0D 54 20 00 20 00 20 00 A5 63 85 5F A4 7F 20 00 31 00 20 00 31 00 20 00 35 00 20 00 39 00 20 00 30 00 20 00 35 00 20 00 33 00 20 00 35 00 20 00 32 00 20 00 36 00 00 05 CF 9C 03 00 01");
 							this.Parent.Client.Send(outPacket);
 						}
 						return;
@@ -1523,11 +1716,6 @@ namespace KartRider
 							outPacket.WriteHexString("00 00 00 00 06 00 00 00 00 00 E8 03 01 00 F4 01 00 00 E8 03 01 00 F4 01 00 00 E8 03 01 00 F4 01");
 							this.Parent.Client.Send(outPacket);
 						}
-						using (OutPacket outPacket = new OutPacket("PcSlaveNotice"))
-						{
-							outPacket.WriteString("分解卡丁车可以重置此车装备的部件！");
-							this.Parent.Client.Send(outPacket);
-						}
 						return;
 					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqRequestExchangeInitPacket", 0))
@@ -1650,16 +1838,131 @@ namespace KartRider
 					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqSyncDictionaryInfoPacket", 0))
 					{
-						int Dictionary = iPacket.ReadInt();
+						List<List<short>> dictionary = new List<List<short>>();
+						XmlDocument Item = new XmlDocument();
+						Item.Load(@"Profile\Item.xml");
+						if (Item.GetElementsByTagName("Character") != null)
+						{
+							XmlNodeList lis = Item.GetElementsByTagName("Character");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 1, i };
+								dictionary.Add(add);
+							}
+						}
+						if (Item.GetElementsByTagName("Paint") != null)
+						{
+							XmlNodeList lis = Item.GetElementsByTagName("Paint");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 2, i };
+								dictionary.Add(add);
+							}
+						}
+						if (Item.GetElementsByTagName("Goggle") != null)
+						{
+							XmlNodeList lis = Item.GetElementsByTagName("Goggle");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 8, i };
+								dictionary.Add(add);
+							}
+						}
+						if (Item.GetElementsByTagName("Balloon") != null)
+						{
+							XmlNodeList lis = Item.GetElementsByTagName("Balloon");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 9, i };
+								dictionary.Add(add);
+							}
+						}
+						if (Item.GetElementsByTagName("HeadBand") != null)
+						{
+							XmlNodeList lis = Item.GetElementsByTagName("HeadBand");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 11, i };
+								dictionary.Add(add);
+							}
+						}
+						if (Item.GetElementsByTagName("Pet") != null)
+						{
+							XmlNodeList lis = Item.GetElementsByTagName("Pet");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 21, i };
+								dictionary.Add(add);
+							}
+						}
+						if (Item.GetElementsByTagName("Aura") != null)
+						{
+							XmlNodeList lis = Item.GetElementsByTagName("Aura");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 26, i };
+								dictionary.Add(add);
+							}
+						}
+						if (Item.GetElementsByTagName("SkidMark") != null)
+						{
+							XmlNodeList lis = Item.GetElementsByTagName("SkidMark");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 27, i };
+								dictionary.Add(add);
+							}
+						}
+						if (Item.GetElementsByTagName("FlyingPet") != null)
+						{
+							XmlNodeList lis = Item.GetElementsByTagName("FlyingPet");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 52, i };
+								dictionary.Add(add);
+							}
+						}
+						XmlDocument NewKart = new XmlDocument();
+						NewKart.Load(@"Profile\NewKart.xml");
+						if (!(NewKart.GetElementsByTagName("Kart") == null))
+						{
+							XmlNodeList lis = NewKart.GetElementsByTagName("Kart");
+							foreach (XmlNode xn in lis)
+							{
+								XmlElement xe = (XmlElement)xn;
+								short i = short.Parse(xe.GetAttribute("id"));
+								List<short> add = new List<short> { 3, i };
+								dictionary.Add(add);
+							}
+						}
 						using (OutPacket outPacket = new OutPacket("PrSyncDictionaryInfoPacket"))
 						{
 							outPacket.WriteInt(1);
 							outPacket.WriteInt(1);
-							outPacket.WriteInt(0);
-							outPacket.WriteInt(0);
-							outPacket.WriteInt(0);
-							outPacket.WriteInt(0);
-							outPacket.WriteInt(0);
+							outPacket.WriteInt(dictionary.Count);
+							foreach (var item in dictionary)
+							{
+								outPacket.WriteShort(item[0]);
+								outPacket.WriteShort(item[1]);
+							}
 							outPacket.WriteInt(0);
 							this.Parent.Client.Send(outPacket);
 						}
@@ -1886,6 +2189,31 @@ namespace KartRider
 						}
 						return;
 					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqExchangeXPartsItem", 0))
+					{
+						short KartType = iPacket.ReadShort();
+						iPacket.ReadShort();
+						byte Grade = iPacket.ReadByte();
+						Random random = new Random();
+						short[] numbers = { 63, 64, 65, 66 };
+						int randomIndex = random.Next(0, numbers.Length);
+						short randomNumber = numbers[randomIndex];
+						using (OutPacket outPacket = new OutPacket("PrExchangeXPartsItem"))
+						{
+							outPacket.WriteInt(0);
+							outPacket.WriteInt(SetRider.SlotChanger);
+							outPacket.WriteShort(randomNumber);
+							outPacket.WriteShort(KartType);
+							outPacket.WriteShort(1);
+							outPacket.WriteShort(0);
+							outPacket.WriteByte(Grade);
+							outPacket.WriteByte(1);
+							outPacket.WriteShort(1180);
+							outPacket.WriteShort(0);
+							this.Parent.Client.Send(outPacket);
+						}
+						return;
+					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqChannelSwitch", 0))
 					{
 						using (OutPacket outPacket = new OutPacket("ChGetCurrentGpReplyPacket"))
@@ -2049,6 +2377,64 @@ namespace KartRider
 							outPacket.WriteInt(1);
 							outPacket.WriteString("cc");
 							outPacket.WriteString(SessionGroup.Service);
+							outPacket.WriteInt(5);
+							outPacket.WriteString("content");
+							outPacket.WriteInt(0);
+							outPacket.WriteInt(2);
+							outPacket.WriteString("name");
+							outPacket.WriteString("dynamicPpl");
+							outPacket.WriteString("enable");
+							outPacket.WriteString("false");
+							outPacket.WriteInt(1);
+							outPacket.WriteString("region");
+							outPacket.WriteInt(0);
+							outPacket.WriteInt(1);
+							outPacket.WriteString("szId");
+							outPacket.WriteString(SessionGroup.usLocale.ToString());
+							outPacket.WriteInt(0);
+							outPacket.WriteString("content");
+							outPacket.WriteInt(0);
+							outPacket.WriteInt(3);
+							outPacket.WriteString("name");
+							outPacket.WriteString("endingBanner");
+							outPacket.WriteString("enable");
+							outPacket.WriteString("false");
+							outPacket.WriteString("value");
+							outPacket.WriteString("http://popkart.tiancity.com/homepage/endbanner.html");
+							outPacket.WriteInt(0);
+							outPacket.WriteString("content");
+							outPacket.WriteInt(0);
+							outPacket.WriteInt(3);
+							outPacket.WriteString("name");
+							outPacket.WriteString("themeXyy");
+							outPacket.WriteString("enable");
+							outPacket.WriteString("true");
+							outPacket.WriteString("visible");
+							outPacket.WriteString("true");
+							outPacket.WriteInt(0);
+							outPacket.WriteString("content");
+							outPacket.WriteInt(0);
+							outPacket.WriteInt(3);
+							outPacket.WriteString("name");
+							outPacket.WriteString("themeKorea");
+							outPacket.WriteString("enable");
+							outPacket.WriteString("true");
+							outPacket.WriteString("visible");
+							outPacket.WriteString("true");
+							outPacket.WriteInt(0);
+							outPacket.WriteString("content");
+							outPacket.WriteInt(0);
+							outPacket.WriteInt(5);
+							outPacket.WriteString("name");
+							outPacket.WriteString("timeAttack");
+							outPacket.WriteString("enable");
+							outPacket.WriteString("true");
+							outPacket.WriteString("visible");
+							outPacket.WriteString("true");
+							outPacket.WriteString("value");
+							outPacket.WriteString("china_R11");
+							outPacket.WriteString("maxReplayFileCount");
+							outPacket.WriteString("250");
 							outPacket.WriteInt(0);
 							outPacket.WriteByte(0);
 							//outPacket.WriteByte(SetGameOption.Set_screen);
@@ -2091,8 +2477,40 @@ namespace KartRider
 						}
 						return;
 					}
-					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqServerSideUdpBindCheck", 0))
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqServerSideUdpBindCheck", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqMissionAttendUserStatePacket", 0) || hash == Adler32Helper.GenerateAdler32_ASCII("PqMissionAttendNRUserStatePacket", 0))
 					{
+						return;
+					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqBoomhillExchangeInfo", 0))
+					{
+						using (OutPacket outPacket = new OutPacket("PrBoomhillExchangeInfo"))
+						{
+							outPacket.WriteBytes(new byte[8]);
+							this.Parent.Client.Send(outPacket);
+						}
+						return;
+					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqBoomhillExchangeNeedNotice", 0))
+					{
+						return;
+					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqMixItemExchangeCount", 0))
+					{
+						using (OutPacket outPacket = new OutPacket("PrMixItemExchangeCount"))
+						{
+							outPacket.WriteInt(0);
+							this.Parent.Client.Send(outPacket);
+						}
+						return;
+					}
+					else if (hash == Adler32Helper.GenerateAdler32_ASCII("RqBoomhillExchangeKoin", 0))
+					{
+						using (OutPacket outPacket = new OutPacket("RpBoomhillExchangeKoin"))
+						{
+							outPacket.WriteInt(0);
+							outPacket.WriteInt(0);
+							this.Parent.Client.Send(outPacket);
+						}
 						return;
 					}
 					else if (hash == Adler32Helper.GenerateAdler32_ASCII("PqQuestUX2ndForShutDownPacket", 0))
@@ -2104,15 +2522,6 @@ namespace KartRider
 						}
 						return;
 					}
-				}
-				if (hash == Adler32Helper.GenerateAdler32_ASCII("PqCnAuthenLogin", 0))
-				{
-					using (OutPacket outPacket = new OutPacket("PrCnAuthenLogin"))
-					{
-						outPacket.WriteHexString("01 00 00 00 80 00 00 00 6C 00 70 00 70 00 69 00 63 00 65 00 6B 00 65 00 64 00 6B 00 67 00 6A 00 64 00 71 00 6D 00 6E 00 63 00 64 00 64 00 70 00 64 00 64 00 65 00 63 00 64 00 6F 00 67 00 6A 00 70 00 70 00 71 00 68 00 72 00 67 00 68 00 71 00 69 00 66 00 71 00 6A 00 6D 00 6A 00 68 00 63 00 66 00 69 00 6F 00 72 00 65 00 63 00 70 00 6D 00 6F 00 63 00 6B 00 64 00 6C 00 6E 00 67 00 6C 00 6F 00 6F 00 72 00 68 00 71 00 6D 00 65 00 6B 00 68 00 72 00 70 00 64 00 70 00 65 00 6A 00 6C 00 67 00 6E 00 63 00 6C 00 6B 00 6C 00 72 00 6D 00 64 00 64 00 68 00 6F 00 70 00 72 00 63 00 71 00 6B 00 6E 00 72 00 66 00 6A 00 6F 00 6C 00 69 00 64 00 6A 00 68 00 6E 00 64 00 65 00 6A 00 69 00 6F 00 6B 00 66 00 6A 00 6F 00 6F 00 67 00 71 00 72 00 67 00 6C 00 64 00 67 00 69 00 67 00 71 00 6C 00 68 00 70 00 70 00 00 22 00 00 00 68 00 74 00 74 00 70 00 73 00 3A 00 2F 00 2F 00 77 00 77 00 77 00 2E 00 74 00 69 00 61 00 6E 00 63 00 69 00 74 00 79 00 2E 00 63 00 6F 00 6D 00 2F 00 61 00 67 00 72 00 65 00 65 00 6D 00 65 00 6E 00 74 00");
-						this.Parent.Client.Send(outPacket);
-					}
-					return;
 				}
 			}
 		}
