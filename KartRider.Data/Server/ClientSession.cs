@@ -834,9 +834,9 @@ namespace KartRider
 									outPacket.WriteShort(existingList[8]);
 									this.Parent.Client.Send(outPacket);
 								}
-								existingList[3] = 603;
-								existingList[4] = 703;
-								existingList[5] = 903;
+								existingList[2] = 603;
+								existingList[3] = 703;
+								existingList[4] = 903;
 								KartExcData.SaveTuneList(KartExcData.TuneList);
 								TuneSpec.Use_TuneSpec(Kart, KartSN);
 							}
