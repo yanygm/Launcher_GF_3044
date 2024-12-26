@@ -2927,10 +2927,14 @@
 	<slotBg id='4' />
 	<slotBg id='5' />
 	<slotBg id='6' />
+	<!--item itemCatId='22' itemName='车牌编辑卡'-->
+	<InitialCard id='1' />
 	<!--item itemCatId='23' itemName='卡片'-->
 	<Card id='1' />
 	<Card id='3' />
 	<Card id='89' />
+	<!--item itemCatId='12' itemName='回放摄像机'-->
+	<HeadPhone id='1' />
 	<!--item itemCatId='13' itemName='回放观赏券'-->
 	<ReplayTicket id='1' />
 	<!--item itemCatId='61' itemName='计程车仪表'-->
