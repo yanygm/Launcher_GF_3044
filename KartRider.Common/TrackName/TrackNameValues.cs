@@ -380,6 +380,7 @@ namespace KartRider_TrackName
 		pirate_I04_rvs = 1353844043,
 		fairy_I02_rvs = 1147667679,
 		fairy_I03_rvs = 1148323040,
+		fairy_R02_rvs = 1155925224,
 		moonhill_R01_rvs = 1807222318,
 		moonhill_I01_rvs = 1798964773,
 		moonhill_I04_rvs = 1800930856,
