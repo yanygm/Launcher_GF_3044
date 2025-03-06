@@ -150,6 +150,7 @@ namespace ExcData
 			var existingTune = tuneList.FirstOrDefault(list => list[0] == kartAndSN.Kart && list[1] == kartAndSN.SN);
 			if (existingTune != null)
 			{
+				TuneSpec.Reset_Tune_SpecData();
 				if (existingTune[2] == 103 || existingTune[3] == 103 || existingTune[4] == 103)
 				{
 					TuneSpec.Tune_DragFactor = -0.0022f;
