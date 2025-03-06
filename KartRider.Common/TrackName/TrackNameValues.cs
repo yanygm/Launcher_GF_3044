@@ -126,6 +126,7 @@ namespace KartRider_TrackName
 		northeu_I07 = 910033940,
 		northeu_I08 = 910165013,
 		northeu_I09 = 910296086,
+		northeu_I10_kd = 1396049212,
 		factory_R01 = 884474890,
 		factory_R02 = 884605963,
 		factory_R03 = 884737036,
